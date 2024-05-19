@@ -1,6 +1,5 @@
 package com.example.thread.ui.component.feed
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,7 +19,6 @@ import com.example.thread.ui.component.text.TextDateTime
 import com.example.thread.ui.component.user.UserAvatarClickable
 import com.example.thread.ui.component.user.UsernameClickable
 import com.example.thread.ui.navigation.ThreadNavController
-import com.example.thread.ui.screen.secondary.threaddetails.ThreadDetailsViewModel
 
 @Composable
 fun FeedCardDetails(

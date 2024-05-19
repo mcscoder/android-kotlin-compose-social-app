@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.Notifications
@@ -27,7 +28,7 @@ import com.example.thread.ui.component.button.ButtonVariant
 import com.example.thread.ui.component.button.IconClickable
 import com.example.thread.ui.component.feed.FeedCard
 import com.example.thread.ui.component.layout.TabRowLayout
-import com.example.thread.ui.component.layout.ThreadDetailsLayout
+import com.example.thread.ui.component.layout.lazyThreadDetailsCard
 import com.example.thread.ui.component.navigation.ThreadTopBar
 import com.example.thread.ui.component.scaffold.ThreadScaffold
 import com.example.thread.ui.component.text.TextBody
@@ -151,33 +152,31 @@ fun ProfileScreen(
             ) { pageIndex ->
                 when (pageIndex) {
                     0 -> {
-                        Column(modifier = Modifier.fillMaxSize(1f)) {
-                            threadsData.forEachIndexed { index, thread ->
-                                FeedCard(
-                                    threadNavController = threadNavController,
-                                    threadData = thread,
-                                    onFeedCardClick = {
-                                        ThreadDetailsData.setThreadsData(
-                                            viewModel.threadsData,
-                                            index
-                                        )
-                                        threadNavController.navigate(ThreadDestination.THREAD_DETAILS.route)
-                                    },
-                                    onFavoriteClick = { isFavorite ->
-                                        viewModel.threadsData.favoritePost(
-                                            isFavorite = isFavorite,
-                                            index = index
-                                        )
-                                    },
-                                    onReplyClick = {
-                                        ThreadDetailsData.setThreadsData(
-                                            viewModel.threadsData,
-                                            index
-                                        )
-                                        threadNavController.navigate(ThreadDestination.REPLY_THREAD.route)
-                                    }
-                                )
-                            }
+                        itemsIndexed(threadsData) { index, thread ->
+                            FeedCard(
+                                threadNavController = threadNavController,
+                                threadData = thread,
+                                onFeedCardClick = {
+                                    ThreadDetailsData.setThreadsData(
+                                        viewModel.threadsData,
+                                        index
+                                    )
+                                    threadNavController.navigate(ThreadDestination.THREAD_DETAILS.route)
+                                },
+                                onFavoriteClick = { isFavorite ->
+                                    viewModel.threadsData.favoritePost(
+                                        isFavorite = isFavorite,
+                                        index = index
+                                    )
+                                },
+                                onReplyClick = {
+                                    ThreadDetailsData.setThreadsData(
+                                        viewModel.threadsData,
+                                        index
+                                    )
+                                    threadNavController.navigate(ThreadDestination.REPLY_THREAD.route)
+                                }
+                            )
                         }
                     }
 
@@ -185,30 +184,29 @@ fun ProfileScreen(
                         if (repliesData.isEmpty()) {
                             viewModel.retrieveRepliesData()
                         } else {
-                            Column {
-                                repliesData.forEachIndexed { index, userReplies ->
-                                    ThreadDetailsLayout(
-                                        threadNavController = threadNavController,
-                                        onFavoriteClick = { isFavorite ->
-                                            viewModel.userRepliesData.favoritePost(
-                                                isFavorite,
-                                                index
-                                            )
-                                        },
-                                        onFavoriteReplyClick = { isFavorite: Boolean, threadReplyIndex: Int ->
-                                            viewModel.userRepliesData.favoriteThreadReply(
-                                                isFavorite,
-                                                threadReplyIndex,
-                                                index
-                                            )
-                                        },
-                                        onReplyClick = { },
-                                        onReplyReplyingClick = {},
-                                        thread = userReplies.mainThread,
-                                        threadReplies = userReplies.threadReplies,
-                                        showBottomDivider = true
-                                    )
-                                }
+                            repliesData.forEachIndexed { index, replies ->
+                                lazyThreadDetailsCard(
+                                    threadNavController = threadNavController,
+                                    onFavoriteClick = { isFavorite ->
+                                        viewModel.userRepliesData.favoritePost(
+                                            isFavorite,
+                                            index
+                                        )
+                                    },
+                                    onFavoriteReplyClick = { isFavorite: Boolean, threadReplyIndex: Int ->
+                                        viewModel.userRepliesData.favoriteThreadReply(
+                                            isFavorite,
+                                            threadReplyIndex,
+                                            index
+                                        )
+                                    },
+                                    onReplyClick = { },
+                                    onReplyReplyingClick = {},
+                                    onReplyCardClick = {},
+                                    thread = replies.mainThread,
+                                    threadReplies = replies.threadReplies,
+                                    showBottomDivider = true
+                                )
                             }
                         }
                     }

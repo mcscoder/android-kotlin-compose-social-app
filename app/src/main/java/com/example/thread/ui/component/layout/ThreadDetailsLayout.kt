@@ -1,7 +1,7 @@
 package com.example.thread.ui.component.layout
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,45 +25,33 @@ fun LazyThreadDetailsLayout(
     threadReplies: List<Thread>,
 ) {
     LazyColumn(modifier = modifier) {
-        item {
-            FeedCardDetails(
-                threadNavController = threadNavController,
-                onFavoriteClick = onFavoriteClick,
-                onReplyClick = onReplyClick,
-                thread = thread
-            )
-        }
-        itemsIndexed(threadReplies) { index, threadReply ->
-            FeedCard(
-                threadNavController = threadNavController,
-                threadData = threadReply,
-                onFavoriteClick = { isFavorite ->
-                    onFavoriteReplyClick(isFavorite, index)
-                },
-                onReplyClick = { onReplyReplyingClick(index) },
-                onFeedCardClick = {
-                    onReplyCardClick(index)
-                },
-                showVerticalDivider = true,
-                ableToReply = ableToReply
-            )
-        }
+        lazyThreadDetailsCard(
+            threadNavController,
+            onFavoriteClick,
+            onFavoriteReplyClick,
+            onReplyClick,
+            onReplyReplyingClick,
+            onReplyCardClick,
+            ableToReply,
+            thread,
+            threadReplies,
+        )
     }
 }
 
-@Composable
-fun ThreadDetailsLayout(
+fun LazyListScope.lazyThreadDetailsCard(
     threadNavController: ThreadNavController,
     onFavoriteClick: (isFavorite: Boolean) -> Unit,
     onFavoriteReplyClick: (isFavorite: Boolean, threadReplyIndex: Int) -> Unit,
     onReplyClick: () -> Unit,
     onReplyReplyingClick: (threadReplyingIndex: Int) -> Unit,
+    onReplyCardClick: (index: Int) -> Unit,
+    ableToReply: Boolean = true,
     thread: Thread,
     threadReplies: List<Thread>,
-    modifier: Modifier = Modifier,
     showBottomDivider: Boolean = false,
 ) {
-    Column(modifier = modifier) {
+    item {
         FeedCardDetails(
             threadNavController = threadNavController,
             onFavoriteClick = onFavoriteClick,
@@ -71,17 +59,25 @@ fun ThreadDetailsLayout(
             thread = thread,
             showHorizontalDivider = !showBottomDivider
         )
-        threadReplies.forEachIndexed { index, threadReply ->
-            FeedCard(
-                threadNavController = threadNavController,
-                threadData = threadReply,
-                onFavoriteClick = { onFavoriteReplyClick(it, index) },
-                onReplyClick = { onReplyReplyingClick(index) },
-                showVerticalDivider = true,
-                showHorizontalDivider = !showBottomDivider
-            )
-        }
-        if (showBottomDivider) {
+    }
+    itemsIndexed(threadReplies) { index, threadReply ->
+        FeedCard(
+            threadNavController = threadNavController,
+            threadData = threadReply,
+            onFavoriteClick = { isFavorite ->
+                onFavoriteReplyClick(isFavorite, index)
+            },
+            onReplyClick = { onReplyReplyingClick(index) },
+            onFeedCardClick = {
+                onReplyCardClick(index)
+            },
+            showVerticalDivider = true,
+            ableToReply = ableToReply,
+            showHorizontalDivider = !showBottomDivider
+        )
+    }
+    if (showBottomDivider) {
+        item {
             ThreadHorizontalDivider()
         }
     }

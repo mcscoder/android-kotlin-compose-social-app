@@ -7,6 +7,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerScope
@@ -25,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -42,47 +44,21 @@ import kotlinx.coroutines.launch
 fun TabRowLayout(
     modifier: Modifier = Modifier,
     title: @Composable LazyItemScope.() -> Unit = {},
+    initialPage: Int = 0,
     tabTitles: List<String> = listOf("Hello", "There", "World"),
     refreshing: Boolean = false,
     onRefresh: (currentPage: Int) -> Unit,
-    content: @Composable PagerScope.(pageIndex: Int) -> Unit = {},
+    content: LazyListScope.(pageIndex: Int) -> Unit = {},
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    val pagerState = rememberPagerState(pageCount = { tabTitles.size })
+    var pageIndex by remember {
+        mutableIntStateOf(initialPage)
+    }
     val listState = rememberLazyListState()
 
-    // Remember scrolled position
-    var pageOffsets by remember {
-        mutableStateOf(List<Int?>(tabTitles.size) { null })
-    }
-
-    // Update the scrolled position for each page
-    LaunchedEffect(pagerState.targetPage) {
-        val newPageOffsets = pageOffsets.toMutableList()
-        if (listState.firstVisibleItemIndex == TabRowLayoutDefaults.HorizontalPagerItemIndex) {
-            newPageOffsets[pagerState.currentPage] = listState.firstVisibleItemScrollOffset
-        } else {
-            newPageOffsets[pagerState.currentPage] = null
-        }
-        pageOffsets = newPageOffsets
-    }
-
-    // Scroll back to the previously scrolled position
-    LaunchedEffect(pagerState.currentPage) {
-        // Do nothing when the first item still visible
-        if (listState.firstVisibleItemIndex >= 1) {
-            val currentPageOffset = pageOffsets[pagerState.currentPage]
-            if (currentPageOffset == null) {
-                // If currentPageOff = null that means the current page still not scrolling yet
-                // Scroll it to TabRow by default
-                listState.scrollToItem(TabRowLayoutDefaults.TabRowItemIndex, 0)
-            } else {
-                // Else scroll back to the previously scrolled position
-                listState.scrollToItem(
-                    TabRowLayoutDefaults.HorizontalPagerItemIndex,
-                    currentPageOffset
-                )
-            }
+    LaunchedEffect(pageIndex) {
+        val firstVisibleItemIndex = listState.firstVisibleItemIndex
+        if (firstVisibleItemIndex >= TabRowLayoutDefaults.TabRowItemIndex) {
+            listState.animateScrollToItem(TabRowLayoutDefaults.TabRowItemIndex)
         }
     }
 
@@ -96,49 +72,46 @@ fun TabRowLayout(
 
     PullRefreshLayout(
         refreshing = refreshing,
-        onRefresh = { onRefresh(pagerState.currentPage) }
+        onRefresh = { onRefresh(pageIndex) }
     ) { pullRefreshState ->
         LazyColumn(modifier = modifier.pullRefresh(pullRefreshState), state = listState) {
             item { title() }
             stickyHeader {
                 TabRow(
-                    selectedTabIndex = pagerState.currentPage,
+                    selectedTabIndex = pageIndex,
                     indicator = { tabPositions ->
+                        // It's worked like this by default
+                        // But to customize them we need to replace them by another
+                        // With modified UI
                         TabRowDefaults.Indicator(
-                            modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                            modifier = Modifier.tabIndicatorOffset(tabPositions[pageIndex]),
                             color = Color.Black,
                             height = 2.dp
                         )
                     }
                 ) {
                     tabTitles.forEachIndexed { index, title ->
-                        // Prevent button ripple effect when clicked
-                        CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
-                            Tab(selected = pagerState.currentPage == index,
-                                onClick = {
-                                    coroutineScope.launch {
-                                        pagerState.animateScrollToPage(index)
-                                    }
-                                },
-                                selectedContentColor = Color.Black,
-                                unselectedContentColor = Color.Gray,
-                                text = {
-                                    TextBody(
-                                        text = title,
-                                        bold = true,
-                                        color = LocalContentColor.current
-                                    )
-                                }
-                            )
-                        }
+                        // // Prevent button ripple effect when clicked
+                        // CompositionLocalProvider(LocalRippleTheme provides NoRippleTheme) {
+                        Tab(selected = pageIndex == index,
+                            onClick = {
+                                pageIndex = index
+                            },
+                            selectedContentColor = Color.Black,
+                            unselectedContentColor = Color.Gray,
+                            text = {
+                                TextBody(
+                                    text = title,
+                                    bold = true,
+                                    color = LocalContentColor.current
+                                )
+                            }
+                        )
+                        // }
                     }
                 }
             }
-            item {
-                HorizontalPager(state = pagerState, verticalAlignment = Alignment.Top) {
-                    content(it)
-                }
-            }
+            content(pageIndex)
         }
     }
 }
