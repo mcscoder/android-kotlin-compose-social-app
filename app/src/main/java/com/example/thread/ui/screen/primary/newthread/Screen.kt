@@ -57,7 +57,8 @@ fun NewThreadScreen(
                     FeedCard(
                         threadNavController = threadNavController,
                         threadData = threadReply,
-                        showActionButton = false
+                        showActionButton = false,
+                        showVerticalDivider = true
                     )
                 }
                 NewThreadInput(

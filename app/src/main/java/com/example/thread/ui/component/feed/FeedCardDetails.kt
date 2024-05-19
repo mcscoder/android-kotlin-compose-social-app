@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,6 +16,7 @@ import com.example.thread.ui.component.button.ThreadActionButtons
 import com.example.thread.ui.component.common.ThreadHorizontalDivider
 import com.example.thread.ui.component.image.FeedCardImageRow
 import com.example.thread.ui.component.text.TextBody
+import com.example.thread.ui.component.text.TextDateTime
 import com.example.thread.ui.component.user.UserAvatarClickable
 import com.example.thread.ui.component.user.UsernameClickable
 import com.example.thread.ui.navigation.ThreadNavController
@@ -33,17 +35,19 @@ fun FeedCardDetails(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // User avatar
             UserAvatarClickable(
                 avatarURL = thread.user.avatarURL!!,
                 onClick = { threadNavController.navigateToUserProfile(thread.user.id) }
             )
+            Spacer(modifier = Modifier.width(12.dp))
             // Username
             UsernameClickable(
                 username = thread.user.username,
                 onClick = { threadNavController.navigateToUserProfile(thread.user.id) })
+            Spacer(modifier = Modifier.width(4.dp))
+            TextDateTime(timeStamp = thread.dateTime.createdAt)
         }
         Spacer(modifier = Modifier.height(8.dp))
         // Thread content
