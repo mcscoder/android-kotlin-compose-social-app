@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ThreadHorizontalDivider() {
-    Divider(modifier = Modifier.fillMaxWidth(), thickness = 0.5.dp, color = Color.LightGray)
+    Divider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = Color(217, 217, 217))
 }
 
 @Composable

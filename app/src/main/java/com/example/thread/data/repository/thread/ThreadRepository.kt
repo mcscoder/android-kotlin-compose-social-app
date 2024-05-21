@@ -13,6 +13,11 @@ class ThreadRepository(
     private val apiService: ApiService = RetrofitInstance.apiService,
     private val resourceRepository: ResourceRepository = ResourceRepository(),
 ) {
+    // 0. Get a single Thread by Id
+    fun getThreadById(threadId: Int, userId: Int): Thread? {
+        return apiService.getThread(threadId, userId).execute().body()
+    }
+
     // 1. Get random Threads
     fun getRandomThreads(count: Int, userId: Int): List<Thread>? {
         return apiService.getRandomThreads(count, userId).execute().body()

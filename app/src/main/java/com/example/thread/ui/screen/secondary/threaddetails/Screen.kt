@@ -9,9 +9,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.example.thread.data.model.thread.Thread
-import com.example.thread.data.viewmodel.ThreadReplies
-import com.example.thread.data.viewmodel.ThreadReplyingReplies
-import com.example.thread.data.viewmodel.ThreadsData
+import com.example.thread.data.viewmodel.threaddata.ThreadReplies
+import com.example.thread.data.viewmodel.threaddata.ThreadReplyingReplies
+import com.example.thread.data.viewmodel.threaddata.ThreadsData
 import com.example.thread.ui.component.scaffold.ThreadScaffold
 import com.example.thread.ui.component.button.IconClickable
 import com.example.thread.ui.component.layout.LazyThreadDetailsLayout

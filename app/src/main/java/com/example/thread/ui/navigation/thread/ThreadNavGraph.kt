@@ -2,8 +2,8 @@ package com.example.thread.ui.navigation.thread
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.example.thread.data.viewmodel.MainThreads
-import com.example.thread.data.viewmodel.ThreadReplies
+import com.example.thread.data.viewmodel.threaddata.MainThreads
+import com.example.thread.data.viewmodel.threaddata.ThreadReplies
 import com.example.thread.ui.navigation.NavigationType
 import com.example.thread.ui.navigation.ThreadNavController
 import com.example.thread.ui.navigation.getNavRoute

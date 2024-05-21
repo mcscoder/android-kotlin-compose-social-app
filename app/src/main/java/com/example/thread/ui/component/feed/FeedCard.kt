@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
@@ -81,13 +82,7 @@ fun FeedCard(
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     // Thread content
-                    TextBody(
-                        text = threadData.content.text!!
-                    )
-                    if (threadData.imageURLs.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        FeedCardImageRow(imageURLs = threadData.imageURLs)
-                    }
+                    FeedCardContent(threadData)
                     if (showActionButton) {
                         Spacer(modifier = Modifier.height(12.dp))
                         // Thread action buttons
@@ -115,6 +110,18 @@ fun FeedCard(
                 }
             }
             if (showActionButton && showHorizontalDivider) ThreadHorizontalDivider()
+        }
+    }
+}
+
+@Composable
+fun FeedCardContent(threadData: Thread) {
+    Column {
+        // Thread content
+        TextBody(text = threadData.content.text!!)
+        if (threadData.imageURLs.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            FeedCardImageRow(imageURLs = threadData.imageURLs)
         }
     }
 }

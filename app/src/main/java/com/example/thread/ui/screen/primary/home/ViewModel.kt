@@ -1,8 +1,8 @@
 package com.example.thread.ui.screen.primary.home
 
 import androidx.lifecycle.ViewModel
-import com.example.thread.data.viewmodel.MainThreads
-import com.example.thread.data.viewmodel.ThreadsData
+import com.example.thread.data.viewmodel.threaddata.MainThreads
+import com.example.thread.data.viewmodel.threaddata.ThreadsData
 import com.example.thread.ui.screen.ThreadViewModelProvider
 import com.example.thread.ui.screen.ViewModelProviderManager
 

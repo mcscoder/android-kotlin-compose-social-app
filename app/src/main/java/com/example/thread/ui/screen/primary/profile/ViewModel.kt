@@ -1,24 +1,12 @@
 package com.example.thread.ui.screen.primary.profile
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.thread.data.model.user.User
-import com.example.thread.data.model.user.UserReplies
-import com.example.thread.data.repository.thread.ThreadRepository
-import com.example.thread.data.repository.user.UserRepository
-import com.example.thread.data.viewmodel.ThreadsData
+import com.example.thread.data.viewmodel.threaddata.ThreadsData
 import com.example.thread.data.viewmodel.UserData
 import com.example.thread.data.viewmodel.UserRepliesData
 import com.example.thread.ui.screen.GlobalViewModelProvider
 import com.example.thread.ui.screen.ThreadViewModelProvider
 import com.example.thread.ui.screen.ViewModelProviderManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 object ProfileViewModelProvider : ThreadViewModelProvider {
     private var myProfileInstance: ProfileViewModel? = null
@@ -72,7 +60,7 @@ class ProfileViewModel(val userId: Int) : ViewModel() {
     }
 
     fun retrieveThreadData() {
-        threadsData.retrieveThreadData(userId)
+        threadsData.retrieveUserThreadsData(userId)
     }
 
     fun retrieveUserData() {

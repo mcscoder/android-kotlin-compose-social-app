@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.example.thread.dataStore
 import com.example.thread.ui.screen.ViewModelProviderManager
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -17,20 +18,17 @@ class UserPreferences(private val context: Context) {
     }
 
     fun clearUser() {
-        runBlocking {
-            launch(context = Dispatchers.IO) {
-                clearUserId()
-                // Also clear all data of all view model
-                ViewModelProviderManager.clear()
-            }
+        CoroutineScope(Dispatchers.IO).launch {
+            clearUserId()
+            // Also clear all data of all view model
+            ViewModelProviderManager.clear()
         }
     }
 
     fun setUser(userId: Int) {
-        runBlocking {
-            launch(context = Dispatchers.IO) {
-                setUserId(userId)
-            }
+        CoroutineScope(Dispatchers.IO).launch {
+            setUserId(userId)
+
         }
     }
 

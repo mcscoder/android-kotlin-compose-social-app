@@ -5,6 +5,7 @@ import com.example.thread.data.model.favorite.Favorite
 import com.example.thread.data.model.user.UserReplies
 import com.example.thread.data.repository.thread.ThreadRepository
 import com.example.thread.ui.screen.GlobalViewModelProvider
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,12 +22,10 @@ class UserRepliesData(private val userId: Int) {
     private val threadRepository = ThreadRepository()
 
     fun retrieveRepliesData() {
-        runBlocking {
-            launch(context = Dispatchers.IO) {
-                val userReplies = threadRepository.getRepliesByUser(userId)
-                if (userReplies != null) {
-                    _data.update { userReplies }
-                }
+        CoroutineScope(Dispatchers.IO).launch {
+            val userReplies = threadRepository.getRepliesByUser(userId)
+            if (userReplies != null) {
+                _data.update { userReplies }
             }
         }
     }
@@ -48,11 +47,9 @@ class UserRepliesData(private val userId: Int) {
             updatedUserReplies
         }
         // Sync to the database on the server
-        runBlocking {
-            launch(context = Dispatchers.IO) {
-                val threadId = data.value[index].mainThread.content.id
-                threadRepository.favoriteThread(threadId, isFavorite, currentUserId)
-            }
+        CoroutineScope(Dispatchers.IO).launch {
+            val threadId = data.value[index].mainThread.content.id
+            threadRepository.favoriteThread(threadId, isFavorite, currentUserId)
         }
     }
 
@@ -73,14 +70,12 @@ class UserRepliesData(private val userId: Int) {
             updatedUserReplies
         }
 
-        runBlocking {
-            launch(context = Dispatchers.IO) {
-                threadRepository.favoriteThreadReply(
-                    data.value[index].threadReplies[threadReplyIndex].content.id,
-                    isFavorite,
-                    currentUserId
-                )
-            }
+        CoroutineScope(Dispatchers.IO).launch {
+            threadRepository.favoriteThreadReply(
+                data.value[index].threadReplies[threadReplyIndex].content.id,
+                isFavorite,
+                currentUserId
+            )
         }
     }
 }

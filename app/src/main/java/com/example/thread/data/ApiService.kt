@@ -1,5 +1,6 @@
 package com.example.thread.data
 
+import com.example.thread.data.model.activity.ReplyActivity
 import com.example.thread.data.model.response.ResponseMessage
 import com.example.thread.data.model.thread.Thread
 import com.example.thread.data.model.thread.ThreadRequest
@@ -93,6 +94,11 @@ interface ApiService {
         @Header("profileUserId") profileUserId: Int,
         @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getUserId(),
     ): Call<List<UserReplies>>
+
+    @GET("activity/replies")
+    fun getRepliesActivity(
+        @Header("userId") userId: Int = GlobalViewModelProvider.getUserId(),
+    ): Call<List<ReplyActivity>>
 }
 
 fun main() {
