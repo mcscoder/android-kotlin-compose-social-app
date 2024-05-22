@@ -1,6 +1,5 @@
 package com.example.thread.data.viewmodel
 
-import androidx.lifecycle.viewModelScope
 import com.example.thread.data.model.favorite.Favorite
 import com.example.thread.data.model.user.UserReplies
 import com.example.thread.data.repository.thread.ThreadRepository
@@ -12,13 +11,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class UserRepliesData(private val userId: Int) {
     private val _data = MutableStateFlow<List<UserReplies>>(emptyList())
     val data: StateFlow<List<UserReplies>> = _data.asStateFlow()
 
-    private val currentUserId = GlobalViewModelProvider.getUserId()
+    private val currentUserId = GlobalViewModelProvider.getCurrentUserId()
     private val threadRepository = ThreadRepository()
 
     fun retrieveRepliesData() {

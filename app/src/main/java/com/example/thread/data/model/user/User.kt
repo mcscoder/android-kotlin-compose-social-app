@@ -18,20 +18,10 @@ data class User(
 
     @field:SerializedName("avatarURL")
     val avatarURL: String? = null,
-)
 
-data class OtherUser(
-    val user: User,
-    val status: OtherUserStatus,
-)
+    val following: Boolean = false,
 
-data class OtherUserStatus(
-    val followStatus: FollowStatus,
-)
-
-data class FollowStatus(
-    val followed: Boolean, // True if others are following you, otherwise False
-    val following: Boolean, // True if you are following others, otherwise False
+    val followers: Int = 0,
 )
 
 data class UserReplies(

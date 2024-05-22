@@ -45,7 +45,7 @@ object GlobalViewModelProvider : ThreadViewModelProvider {
         }
     }
 
-    fun getUserId(): Int {
+    fun getCurrentUserId(): Int {
         return getInstance().getUser().id
     }
 

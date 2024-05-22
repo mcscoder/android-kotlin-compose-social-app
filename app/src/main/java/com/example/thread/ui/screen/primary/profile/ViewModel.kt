@@ -1,6 +1,7 @@
 package com.example.thread.ui.screen.primary.profile
 
 import androidx.lifecycle.ViewModel
+import com.example.thread.data.repository.user.UserRepository
 import com.example.thread.data.viewmodel.threaddata.ThreadsData
 import com.example.thread.data.viewmodel.UserData
 import com.example.thread.data.viewmodel.UserRepliesData
@@ -18,7 +19,7 @@ object ProfileViewModelProvider : ThreadViewModelProvider {
 
     fun getInstance(userId: Int): ProfileViewModel {
         synchronized(lock = this) {
-            if (userId == GlobalViewModelProvider.getInstance().getUser().id) {
+            if (userId == GlobalViewModelProvider.getCurrentUserId()) {
                 if (myProfileInstance == null) {
                     myProfileInstance = ProfileViewModel(userId)
                 }
@@ -27,7 +28,7 @@ object ProfileViewModelProvider : ThreadViewModelProvider {
 
             if (otherProfileInstance == null) {
                 otherProfileInstance = ProfileViewModel(userId)
-            } else if (otherProfileInstance?.userId != userId) {
+            } else if (otherProfileInstance?.targetUserId != userId) {
                 otherProfileInstance = ProfileViewModel(userId)
             }
 
@@ -49,18 +50,22 @@ object ProfileViewModelProvider : ThreadViewModelProvider {
     }
 }
 
-class ProfileViewModel(val userId: Int) : ViewModel() {
-    val userData = UserData(userId)
+class ProfileViewModel(val targetUserId: Int) : ViewModel() {
+    val userData = UserData(targetUserId)
     val threadsData = ThreadsData()
-    val userRepliesData = UserRepliesData(userId)
+    val userRepliesData = UserRepliesData(targetUserId)
 
     init {
         retrieveUserData()
         retrieveThreadData()
     }
 
+    fun onFollowUser() {
+        userData.onFollowUser()
+    }
+
     fun retrieveThreadData() {
-        threadsData.retrieveUserThreadsData(userId)
+        threadsData.retrieveUserThreadsData(targetUserId)
     }
 
     fun retrieveUserData() {

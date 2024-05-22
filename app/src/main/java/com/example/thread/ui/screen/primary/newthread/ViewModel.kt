@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.thread.data.model.user.User
 import com.example.thread.data.repository.thread.ThreadRepository
 import com.example.thread.ui.navigation.ThreadNavController
 import com.example.thread.ui.screen.GlobalViewModelProvider
@@ -23,7 +22,7 @@ class NewThreadViewModel(
     private val threadNavController: ThreadNavController,
     private val threadRepository: ThreadRepository = ThreadRepository(),
 ) : ViewModel() {
-    private val currentUser = GlobalViewModelProvider.getUserId()
+    private val currentUser = GlobalViewModelProvider.getCurrentUserId()
 
     var textContent by mutableStateOf(TextFieldValue())
         private set

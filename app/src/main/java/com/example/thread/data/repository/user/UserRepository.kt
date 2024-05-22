@@ -1,11 +1,12 @@
 package com.example.thread.data.repository.user
 
-import android.util.Log
 import com.example.thread.data.ApiService
 import com.example.thread.data.RetrofitInstance
+import com.example.thread.data.model.response.ResponseMessage
 import com.example.thread.data.model.user.LoginRequest
 import com.example.thread.data.model.user.LoginResponse
 import com.example.thread.data.model.user.User
+import com.example.thread.ui.screen.GlobalViewModelProvider
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,6 +29,25 @@ class UserRepository(
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+            }
+        })
+    }
+
+    fun followUser(
+        targetUserId: Int,
+        currentUserId: Int,
+        onResponse: () -> Unit = {},
+    ) {
+        val call = apiService.followUser(targetUserId, currentUserId)
+        call.enqueue(object : Callback<ResponseMessage> {
+            override fun onResponse(
+                call: Call<ResponseMessage>,
+                response: Response<ResponseMessage>,
+            ) {
+                onResponse()
+            }
+
+            override fun onFailure(call: Call<ResponseMessage>, t: Throwable) {
             }
         })
     }

@@ -1,5 +1,6 @@
 package com.example.thread.data
 
+import com.example.thread.data.model.activity.FollowActivity
 import com.example.thread.data.model.activity.ReplyActivity
 import com.example.thread.data.model.response.ResponseMessage
 import com.example.thread.data.model.thread.Thread
@@ -23,7 +24,10 @@ import retrofit2.http.Query
 
 interface ApiService {
     @GET("user")
-    fun getUser(@Header("userId") userId: Int): Call<User>
+    fun getUser(
+        @Header("otherUserId") userId: Int,
+        @Header("userId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Call<User>
 
     @POST("authentication/login")
     fun loginAuthentication(@Body loginRequest: LoginRequest): Call<LoginResponse>
@@ -34,40 +38,40 @@ interface ApiService {
     @GET("thread/random/{count}")
     fun getRandomThreads(
         @Path("count") count: Int,
-        @Header("userId") userId: Int = GlobalViewModelProvider.getUserId(),
+        @Header("userId") userId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Call<List<Thread>>
 
     @GET("thread/replies/{mainThreadId}")
     fun getThreadReplies(
         @Path("mainThreadId") mainThreadId: Int,
-        @Header("userId") userId: Int = GlobalViewModelProvider.getUserId(),
+        @Header("userId") userId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Call<List<Thread>>
 
     @GET("thread/replying/reply/{threadReplyId}")
     fun getThreadReplyingReplies(
         @Path("threadReplyId") threadReplyId: Int,
-        @Header("userId") userId: Int = GlobalViewModelProvider.getUserId(),
+        @Header("userId") userId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Call<List<Thread>>
 
     @GET("thread/favorite/{threadId}")
     fun favoriteThread(
         @Path("threadId") threadId: Int,
         @Query("isFavorite") isFavorite: Boolean? = null,
-        @Header("userId") userId: Int = GlobalViewModelProvider.getUserId(),
+        @Header("userId") userId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Call<ResponseMessage>
 
     @GET("thread/reply/favorite/{threadReplyId}")
     fun favoriteThreadReply(
         @Path("threadReplyId") threadId: Int,
         @Query("isFavorite") isFavorite: Boolean? = null,
-        @Header("userId") userId: Int = GlobalViewModelProvider.getUserId(),
+        @Header("userId") userId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Call<ResponseMessage>
 
     @GET("thread/replying/reply/favorite/{threadReplyingReplyId}")
     fun favoriteThreadReplyingReply(
         @Path("threadReplyingReplyId") threadId: Int,
         @Query("isFavorite") isFavorite: Boolean? = null,
-        @Header("userId") userId: Int = GlobalViewModelProvider.getUserId(),
+        @Header("userId") userId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Call<ResponseMessage>
 
     @POST("thread")
@@ -86,19 +90,32 @@ interface ApiService {
     @GET("user/threads")
     fun getThreadsByUser(
         @Header("profileUserId") profileUserId: Int,
-        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getUserId(),
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Call<List<Thread>>
 
     @GET("user/replies")
     fun getRepliesByUser(
         @Header("profileUserId") profileUserId: Int,
-        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getUserId(),
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Call<List<UserReplies>>
 
+    // activity
     @GET("activity/replies")
-    fun getRepliesActivity(
-        @Header("userId") userId: Int = GlobalViewModelProvider.getUserId(),
+    fun getReplyActivities(
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Call<List<ReplyActivity>>
+
+    @GET("activity/follows")
+    fun getFollowActivities(
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId()
+    ) : Call<List<FollowActivity>>
+
+    // follow a User
+    @GET("follow")
+    fun followUser(
+        @Header("targetUserId") targetUserId: Int,
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Call<ResponseMessage>
 }
 
 fun main() {

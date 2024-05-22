@@ -62,8 +62,7 @@ fun FeedCard(
                 ) {
                     UserAvatarClickable(
                         avatarURL = threadData.user.avatarURL!!,
-                        isFollowed = GlobalViewModelProvider.getInstance()
-                            .getUser().id == threadData.user.id,
+                        isFollowed = threadData.user.following,
                         onClick = { threadNavController.navigateToUserProfile(threadData.user.id) }
                     )
                     if (showVerticalDivider) {
@@ -155,7 +154,8 @@ val feedCardSampleData = Thread(
         username = "yasuo",
         firstName = "yasuo",
         lastName = "hasagi",
-        avatarURL = "https://images.contentstack.io/v3/assets/blt93c07aad6c2c008a/blt9680fb33fc981b63/63ea6f40ae8b807255191fa6/Yasuo_0.jpg?auto=webp&width=200&height=200"
+        avatarURL = "https://images.contentstack.io/v3/assets/blt93c07aad6c2c008a/blt9680fb33fc981b63/63ea6f40ae8b807255191fa6/Yasuo_0.jpg?auto=webp&width=200&height=200",
+        following = false
     ),
     favorite = Favorite(
         favoriteCount = 10,

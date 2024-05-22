@@ -1,7 +1,6 @@
 package com.example.thread.ui.screen.primary.profile
 
 import android.util.Log
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -17,6 +16,7 @@ import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,7 +41,7 @@ import com.example.thread.ui.navigation.thread.ThreadDetailsData
 import com.example.thread.ui.screen.GlobalViewModelProvider
 
 @Composable
-fun ProfileHeader(userData: User, myProfile: Boolean) {
+fun ProfileHeader(userData: User, viewModel: ProfileViewModel, myProfile: Boolean) {
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Row(modifier = Modifier.height(IntrinsicSize.Min)) {
             Column(
@@ -59,7 +59,7 @@ fun ProfileHeader(userData: User, myProfile: Boolean) {
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        TextBody(text = "999 followers", color = Color.Gray)
+        TextBody(text = "${userData.followers} followers", color = Color.Gray)
         Spacer(modifier = Modifier.height(20.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             if (myProfile) {
@@ -81,11 +81,18 @@ fun ProfileHeader(userData: User, myProfile: Boolean) {
                 }
             } else {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        viewModel.onFollowUser()
+                    },
                     rounded = false,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    buttonVariant = if (userData.following) ButtonVariant.OUTLINED else ButtonVariant.FILLED
                 ) {
-                    TextBody(text = "Follow", color = Color.White, bold = true)
+                    TextBody(
+                        text = if (userData.following) "Following" else "Follow",
+                        color = if (userData.following) Color.Black else Color.White,
+                        bold = true
+                    )
                 }
                 Button(
                     onClick = { /*TODO*/ },
@@ -101,15 +108,15 @@ fun ProfileHeader(userData: User, myProfile: Boolean) {
 }
 
 // 1. Profile Screen [Primary]
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProfileScreen(
     threadNavController: ThreadNavController,
     userId: Int,
-    myProfile: Boolean = userId == GlobalViewModelProvider.getUserId(),
+    myProfile: Boolean = userId == GlobalViewModelProvider.getCurrentUserId(),
 ) {
-    val viewModel: ProfileViewModel =
+    val viewModel: ProfileViewModel = remember {
         ProfileViewModelProvider.getInstance(userId)
+    }
 
     val threadsData = viewModel.threadsData.data.collectAsState().value
     val userData = viewModel.userData.data.collectAsState().value
@@ -135,7 +142,7 @@ fun ProfileScreen(
                 modifier = Modifier
                     .padding(paddingValues)
                     .fillMaxSize(),
-                title = { ProfileHeader(userData, myProfile) },
+                title = { ProfileHeader(userData, viewModel, myProfile) },
                 tabTitles = listOf("Threads", "Replies"),
                 onRefresh = { currentPage ->
                     viewModel.retrieveUserData()
