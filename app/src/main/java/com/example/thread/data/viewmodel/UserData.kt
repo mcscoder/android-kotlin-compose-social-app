@@ -25,9 +25,7 @@ class UserData(private val userId: Int) {
         }
     }
 
-    fun onFollowUser() {
-        userRepository.followUser(data.value!!.id, currentUserId) {
-            retrieveUserData()
-        }
+    fun onFollowUser(onResponse: () -> Unit = { retrieveUserData() }) {
+        userRepository.followUser(data.value!!.id, onResponse)
     }
 }

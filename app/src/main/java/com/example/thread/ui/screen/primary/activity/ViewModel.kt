@@ -1,17 +1,19 @@
 package com.example.thread.ui.screen.primary.activity
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.thread.data.viewmodel.activitydata.FollowActivitiesData
+import com.example.thread.data.viewmodel.activitydata.FollowsData
 import com.example.thread.data.viewmodel.activitydata.ReplyActivitiesData
+import com.example.thread.ui.screen.GlobalViewModelProvider
 import com.example.thread.ui.screen.ThreadViewModelProvider
+import com.example.thread.ui.screen.ViewModelProviderManager
 
 object ActivityViewModelProvider : ThreadViewModelProvider {
     private var instance: ActivityViewModel? = null
     var currentPageIndex = 0
+
+    init {
+        ViewModelProviderManager.addProvider(this)
+    }
 
     fun getInstance(): ActivityViewModel {
         synchronized(this) {
@@ -30,5 +32,9 @@ object ActivityViewModelProvider : ThreadViewModelProvider {
 
 class ActivityViewModel : ViewModel() {
     val replies = ReplyActivitiesData()
-    val follows = FollowActivitiesData()
+    val follows = FollowsData()
+
+    fun retrieveFollowersData(targetUserId: Int = GlobalViewModelProvider.getCurrentUserId()) {
+        follows.retrieveFollowersData(targetUserId)
+    }
 }

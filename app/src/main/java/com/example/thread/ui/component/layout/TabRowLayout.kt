@@ -3,6 +3,7 @@
 package com.example.thread.ui.component.layout
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
@@ -37,7 +38,7 @@ fun TabRowLayout(
     refreshing: Boolean = false,
     onRefresh: (currentPage: Int) -> Unit,
     listState: LazyListState = rememberLazyListState(),
-    content: LazyListScope.(pageIndex: Int) -> Unit = {},
+    content: LazyListScope.(pageIndex: Int) -> Unit,
 ) {
     var currentPageIndex by remember {
         mutableIntStateOf(initialPage)
@@ -48,7 +49,12 @@ fun TabRowLayout(
         refreshing = refreshing,
         onRefresh = { onRefresh(currentPageIndex) }
     ) { pullRefreshState ->
-        LazyColumn(modifier = modifier.pullRefresh(pullRefreshState), state = listState) {
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize()
+                .pullRefresh(pullRefreshState),
+            state = listState
+        ) {
             item { title() }
             stickyHeader {
                 TabRow(

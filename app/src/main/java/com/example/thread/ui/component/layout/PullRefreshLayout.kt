@@ -3,6 +3,7 @@ package com.example.thread.ui.component.layout
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.PullRefreshState
@@ -24,7 +25,7 @@ fun PullRefreshLayout(
         onRefresh = onRefresh
     )
 
-    Box(modifier = modifier) {
+    Box(modifier = modifier.fillMaxSize()) {
         content(pullRefreshState)
         PullRefreshIndicator(
             refreshing = refreshing,

@@ -2,7 +2,6 @@ package com.example.thread.ui.screen.primary.activity
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -10,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.thread.data.model.activity.ReplyType
-import com.example.thread.data.model.user.User
 import com.example.thread.data.viewmodel.threaddata.MainThreads
 import com.example.thread.data.viewmodel.threaddata.ThreadsData
 import com.example.thread.ui.component.activityitem.FollowActivityItem
@@ -46,6 +44,10 @@ fun ActivityScreen(threadNavController: ThreadNavController, modifier: Modifier 
             when (currentPage) {
                 ActivityScreenIndex.REPLIES.ordinal -> {
                     viewModel.replies.retrieveReplyActivities()
+                }
+
+                ActivityScreenIndex.FOLLOWS.ordinal -> {
+                    viewModel.retrieveFollowersData()
                 }
             }
         }
@@ -83,12 +85,18 @@ fun ActivityScreen(threadNavController: ThreadNavController, modifier: Modifier 
 
             ActivityScreenIndex.FOLLOWS.ordinal -> {
                 if (follows.isEmpty()) {
-                    viewModel.follows.retrieveFollowActivities()
+                    viewModel.retrieveFollowersData()
                 } else {
                     itemsIndexed(follows) { index, followActivity ->
-                        FollowActivityItem(followActivity = followActivity, onClick = {
-                            threadNavController.navigateToUserProfile(followActivity.user.id)
-                        })
+                        FollowActivityItem(
+                            followActivity = followActivity,
+                            onClick = {
+                                threadNavController.navigateToUserProfile(followActivity.user.id)
+                            },
+                            onActionClick = {
+                                viewModel.follows.onFollowUser(followActivity.user.id)
+                            }
+                        )
                     }
                 }
             }

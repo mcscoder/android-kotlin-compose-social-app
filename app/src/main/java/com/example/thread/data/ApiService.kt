@@ -99,23 +99,30 @@ interface ApiService {
         @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Call<List<UserReplies>>
 
-    // activity
+    // ----- activity
     @GET("activity/replies")
     fun getReplyActivities(
         @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Call<List<ReplyActivity>>
 
-    @GET("activity/follows")
-    fun getFollowActivities(
-        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId()
-    ) : Call<List<FollowActivity>>
-
-    // follow a User
+    // ----- follows
     @GET("follow")
     fun followUser(
         @Header("targetUserId") targetUserId: Int,
         @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Call<ResponseMessage>
+
+    @GET("followers")
+    fun getFollowers(
+        @Header("targetUserId") targetUserId: Int,
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Call<List<FollowActivity>>
+
+    @GET("followings")
+    fun getFollowings(
+        @Header("targetUserId") targetUserId: Int,
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Call<List<FollowActivity>>
 }
 
 fun main() {
