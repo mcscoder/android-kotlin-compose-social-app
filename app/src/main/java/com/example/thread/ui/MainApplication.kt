@@ -24,6 +24,7 @@ import com.example.thread.ui.navigation.ThreadBottomNavigation
 import com.example.thread.ui.navigation.ThreadNavController
 import com.example.thread.ui.navigation.ThreadNavigationItem
 import com.example.thread.ui.navigation.activity.activityNavGraph
+import com.example.thread.ui.navigation.followerlist.followerListNavGraph
 import com.example.thread.ui.navigation.home.homeNavGraph
 import com.example.thread.ui.navigation.myprofile.myProfileNavGraph
 import com.example.thread.ui.navigation.newthread.newThreadNavGraph
@@ -65,6 +66,7 @@ fun MainApplication() {
                     newThreadNavGraph(threadNavController)
                     profileNavGraph(threadNavController)
                     threadNavGraph(threadNavController)
+                    followerListNavGraph(threadNavController)
                 }
             }
         }

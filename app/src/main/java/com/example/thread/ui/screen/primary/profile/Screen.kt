@@ -1,6 +1,7 @@
 package com.example.thread.ui.screen.primary.profile
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -35,13 +36,19 @@ import com.example.thread.ui.component.text.TextBody
 import com.example.thread.ui.component.text.TextHeadLine
 import com.example.thread.ui.component.user.UserAvatar
 import com.example.thread.ui.navigation.ThreadNavController
+import com.example.thread.ui.navigation.followerlist.FollowerListDestination
 import com.example.thread.ui.navigation.myprofile.MyProfileDestination
 import com.example.thread.ui.navigation.thread.ThreadDestination
 import com.example.thread.ui.navigation.thread.ThreadDetailsData
 import com.example.thread.ui.screen.GlobalViewModelProvider
 
 @Composable
-fun ProfileHeader(userData: User, viewModel: ProfileViewModel, myProfile: Boolean) {
+fun ProfileHeader(
+    threadNavController: ThreadNavController,
+    userData: User,
+    viewModel: ProfileViewModel,
+    myProfile: Boolean,
+) {
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Row(modifier = Modifier.height(IntrinsicSize.Min)) {
             Column(
@@ -59,7 +66,14 @@ fun ProfileHeader(userData: User, viewModel: ProfileViewModel, myProfile: Boolea
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        TextBody(text = "${userData.followers} followers", color = Color.Gray)
+        TextBody(
+            text = "${userData.followers} followers",
+            color = Color.Gray,
+            modifier = Modifier.clickable {
+                threadNavController.navigate(
+                    "${FollowerListDestination.FOLLOWER_LIST.route}/${userData.id}"
+                )
+            })
         Spacer(modifier = Modifier.height(20.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             if (myProfile) {
@@ -142,7 +156,7 @@ fun ProfileScreen(
                 modifier = Modifier
                     .padding(paddingValues)
                     .fillMaxSize(),
-                title = { ProfileHeader(userData, viewModel, myProfile) },
+                title = { ProfileHeader(threadNavController, userData, viewModel, myProfile) },
                 tabTitles = listOf("Threads", "Replies"),
                 onRefresh = { currentPage ->
                     viewModel.retrieveUserData()
