@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.example.thread.ui.component.feed.FeedCard
+import com.example.thread.ui.component.layout.InfiniteScrollLayout
 import com.example.thread.ui.component.layout.PullRefreshLayout
 import com.example.thread.ui.navigation.ThreadNavController
 import com.example.thread.ui.navigation.thread.ThreadDestination
@@ -31,27 +32,18 @@ fun HomeScreen(
     val threadsData = viewModel.threadsData.data.collectAsState().value
 
     if (threadsData.isNotEmpty()) {
-        val listState = rememberLazyListState()
-        val reachedBottom by remember {
-            derivedStateOf {
-                val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-                lastVisibleItem?.index != 0 && lastVisibleItem?.index == listState.layoutInfo.totalItemsCount - 1
-            }
-        }
-
-        LaunchedEffect(reachedBottom) {
-            if (reachedBottom) {
-                viewModel.threadsData.retrieveRandomThreadData(3)
-            }
-        }
-
         PullRefreshLayout(onRefresh = {
             viewModel.threadsData.retrieveRandomThreadData(
                 10,
                 reload = true
             )
         }) { pullRefreshState ->
-            LazyColumn(state = listState, modifier = Modifier.pullRefresh(pullRefreshState)) {
+            InfiniteScrollLayout(
+                modifier = Modifier.pullRefresh(pullRefreshState),
+                onReachedLastVisibleItem = {
+                    viewModel.threadsData.retrieveRandomThreadData(3)
+                }
+            ) {
                 itemsIndexed(items = threadsData) { index, thread ->
                     FeedCard(
                         threadNavController = threadNavController,
