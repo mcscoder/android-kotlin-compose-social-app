@@ -94,7 +94,9 @@ fun ActivityScreen(threadNavController: ThreadNavController, modifier: Modifier 
                                 threadNavController.navigateToUserProfile(followActivity.user.id)
                             },
                             onActionClick = {
-                                viewModel.follows.onFollowUser(followActivity.user.id)
+                                viewModel.follows.onFollowUser(followActivity.user.id) { currentUserId ->
+                                    viewModel.follows.retrieveFollowersData(currentUserId)
+                                }
                             }
                         )
                     }

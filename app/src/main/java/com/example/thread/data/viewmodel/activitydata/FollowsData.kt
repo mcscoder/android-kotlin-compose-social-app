@@ -36,9 +36,9 @@ class FollowsData {
         }
     }
 
-    fun onFollowUser(targetUserId: Int) {
+    fun onFollowUser(targetUserId: Int, onResponse: (currentUserId: Int) -> Unit = {}) {
         userRepository.followUser(targetUserId) {
-            retrieveFollowersData(currentUserId)
+            onResponse(currentUserId)
         }
     }
 }

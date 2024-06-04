@@ -24,7 +24,10 @@ fun FollowActivityItem(
         title = followActivity.user.username,
         timeStamp = followActivity.dateTime.createdAt,
         description = {
-            TextBody(text = "Followed you", color = Color.Gray)
+            TextBody(
+                text = "${followActivity.user.firstName} ${followActivity.user.lastName}",
+                color = Color.Gray
+            )
         },
         onClick = onClick,
         action = {
