@@ -1,8 +1,8 @@
 package com.example.thread.data.viewmodel.threaddata
 
-import com.example.thread.data.model.thread.Thread
+import com.example.thread.data.model.thread.ThreadResponse
 import kotlinx.coroutines.flow.StateFlow
 
 interface ThreadStateFlow {
-    val data: StateFlow<List<Thread>>
+    val data: StateFlow<List<ThreadResponse>>
 }

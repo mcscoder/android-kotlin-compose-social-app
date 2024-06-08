@@ -9,7 +9,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 class ResourceRepository(
     private val apiService: ApiService = RetrofitInstance.apiService,
 ) {
-    fun uploadImages(imageFiles: List<ByteArray>): List<Int> {
+    fun uploadImages(imageFiles: List<ByteArray>): List<String> {
         val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
         imageFiles.forEach { imageFile ->
             requestBody.addFormDataPart(
@@ -22,7 +22,7 @@ class ResourceRepository(
                 )
             )
         }
-        val imageIds = apiService.uploadImages(requestBody.build().parts).execute().body()
-        return imageIds!!
+        val imageUrls = apiService.uploadImages(requestBody.build().parts).execute().body()
+        return imageUrls!!
     }
 }

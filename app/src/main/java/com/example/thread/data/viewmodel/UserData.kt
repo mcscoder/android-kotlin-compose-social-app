@@ -20,12 +20,12 @@ class UserData(private val userId: Int) {
 
     fun retrieveUserData() {
         CoroutineScope(Dispatchers.IO).launch {
-            val user = userRepository.getUser(userId = userId)
-            _data.update { user }
+            // val user = userRepository.getUser(targetUserId = userId)
+            // _data.update { user }
         }
     }
 
     fun onFollowUser(onResponse: () -> Unit = { retrieveUserData() }) {
-        userRepository.followUser(data.value!!.id, onResponse)
+        // userRepository.followUser(data.value!!.id, onResponse)
     }
 }

@@ -4,9 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.filled.MoreHoriz
-import androidx.compose.material.icons.outlined.Cached
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.ModeComment
@@ -16,12 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.thread.data.model.thread.Thread
+import com.example.thread.data.model.thread.ThreadResponse
 import com.example.thread.ui.component.text.TextBody
 
 @Composable
 fun ThreadActionButtons(
-    thread: Thread,
+    thread: ThreadResponse,
     onFavoriteClick: (isFavorite: Boolean) -> Unit,
     onReplyClick: () -> Unit,
     onMoreOptionClick: () -> Unit,
@@ -35,14 +33,14 @@ fun ThreadActionButtons(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconClickable(
-                imageVector = if (thread.favorite.isFavorite) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
-                tint = if (thread.favorite.isFavorite) Color.Red else Color.DarkGray,
+                imageVector = if (thread.overview.favorite.isFavorited) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
+                tint = if (thread.overview.favorite.isFavorited) Color.Red else Color.DarkGray,
                 onClick = {
-                    onFavoriteClick(!thread.favorite.isFavorite)
+                    onFavoriteClick(!thread.overview.favorite.isFavorited)
                 },
                 size = iconSize,
             )
-            TextBody(text = thread.favorite.favoriteCount.toString())
+            TextBody(text = thread.overview.favorite.count.toString())
         }
         if (ableToReply) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -52,7 +50,7 @@ fun ThreadActionButtons(
                     onClick = { onReplyClick() },
                     size = iconSize,
                 )
-                TextBody(text = thread.replyCount.toString())
+                TextBody(text = thread.overview.reply.count.toString())
             }
         }
         IconClickable(

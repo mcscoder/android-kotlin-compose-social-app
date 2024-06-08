@@ -46,7 +46,7 @@ object GlobalViewModelProvider : ThreadViewModelProvider {
     }
 
     fun getCurrentUserId(): Int {
-        return getInstance().getUser().id
+        return getInstance().getUser().userId
     }
 
     override fun clear() {
@@ -68,7 +68,7 @@ class GlobalViewModel : ViewModel() {
             val user = UserRepository().getUser(userId)
             if (user != null) {
                 // delay(2000)
-                _user.update { user }
+                _user.update { user.user }
             }
         }
     }

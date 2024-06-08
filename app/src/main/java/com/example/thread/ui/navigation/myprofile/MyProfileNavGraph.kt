@@ -37,7 +37,7 @@ fun NavGraphBuilder.myProfileNavGraph(threadNavController: ThreadNavController) 
         composable(MyProfileDestination.START_DESTINATION.route) {
             ProfileScreen(
                 threadNavController,
-                GlobalViewModelProvider.getInstance().getUser().id
+                GlobalViewModelProvider.getInstance().getUser().userId
             )
         }
 

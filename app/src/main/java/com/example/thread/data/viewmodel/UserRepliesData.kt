@@ -1,6 +1,5 @@
 package com.example.thread.data.viewmodel
 
-import com.example.thread.data.model.favorite.Favorite
 import com.example.thread.data.model.user.UserReplies
 import com.example.thread.data.repository.thread.ThreadRepository
 import com.example.thread.ui.screen.GlobalViewModelProvider
@@ -35,10 +34,10 @@ class UserRepliesData(private val userId: Int) {
             val updatedReplies =
                 replies.copy(
                     mainThread = replies.mainThread.copy(
-                        favorite = Favorite(
-                            favoriteCount = replies.mainThread.favorite.favoriteCount + if (isFavorite) 1 else -1,
-                            isFavorite = isFavorite
-                        )
+                        // favorite = Favorite(
+                        //     count = replies.mainThread.favorite.favoriteCount + if (isFavorite) 1 else -1,
+                        //     isFavorited = isFavorite
+                        // )
                     )
                 )
             updatedUserReplies[index] = updatedReplies
@@ -46,8 +45,8 @@ class UserRepliesData(private val userId: Int) {
         }
         // Sync to the database on the server
         CoroutineScope(Dispatchers.IO).launch {
-            val threadId = data.value[index].mainThread.content.id
-            threadRepository.favoriteThread(threadId, isFavorite, currentUserId)
+            val threadId = data.value[index].mainThread.content.threadId
+            // threadRepository.favoriteThread(threadId, isFavorite, currentUserId)
         }
     }
 
@@ -57,10 +56,10 @@ class UserRepliesData(private val userId: Int) {
 
             val updatedThreadReplies = updatedUserReplies[index].threadReplies.toMutableList()
             updatedThreadReplies[threadReplyIndex] = updatedThreadReplies[threadReplyIndex].copy(
-                favorite = Favorite(
-                    favoriteCount = updatedThreadReplies[threadReplyIndex].favorite.favoriteCount + if (isFavorite) 1 else -1,
-                    isFavorite = isFavorite
-                )
+                // favorite = Favorite(
+                //     count = updatedThreadReplies[threadReplyIndex].favorite.favoriteCount + if (isFavorite) 1 else -1,
+                //     isFavorited = isFavorite
+                // )
             )
 
             updatedUserReplies[index] =
@@ -70,7 +69,7 @@ class UserRepliesData(private val userId: Int) {
 
         CoroutineScope(Dispatchers.IO).launch {
             threadRepository.favoriteThreadReply(
-                data.value[index].threadReplies[threadReplyIndex].content.id,
+                data.value[index].threadReplies[threadReplyIndex].content.threadId,
                 isFavorite,
                 currentUserId
             )

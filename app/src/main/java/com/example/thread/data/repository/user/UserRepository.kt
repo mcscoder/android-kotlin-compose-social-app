@@ -4,9 +4,9 @@ import com.example.thread.data.ApiService
 import com.example.thread.data.RetrofitInstance
 import com.example.thread.data.model.activity.FollowActivity
 import com.example.thread.data.model.response.ResponseMessage
-import com.example.thread.data.model.user.LoginRequest
+import com.example.thread.data.model.user.UserLoginRequest
 import com.example.thread.data.model.user.LoginResponse
-import com.example.thread.data.model.user.User
+import com.example.thread.data.model.user.UserResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -14,25 +14,14 @@ import retrofit2.Response
 class UserRepository(
     private val apiService: ApiService = RetrofitInstance.apiService,
 ) {
-    // 1. Get User by Id
-    fun getUser(userId: Int = 1): User? {
-        return apiService.getUser(userId).execute().body()
+    // 1.1. Get User by `userId`
+    fun getUser(targetUserId: Int = 1): UserResponse? {
+        return apiService.getUser(targetUserId).execute().body()
     }
 
-    // 2. Login authentication by username and password
-    fun loginAuthentication(
-        loginRequest: LoginRequest,
-        onResponse: (status: Boolean, data: LoginResponse) -> Unit,
-    ) {
-        val call = apiService.loginAuthentication(loginRequest)
-        call.enqueue(object : Callback<LoginResponse> {
-            override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                onResponse(response.isSuccessful, response.body()!!)
-            }
-
-            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-            }
-        })
+    // 1.2. User login authentication
+    fun loginAuthentication(requestBody: UserLoginRequest): Int? {
+        return apiService.userLoginAuthentication(requestBody).execute().body()
     }
 
     // 3. Follow another User

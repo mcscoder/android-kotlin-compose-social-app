@@ -49,76 +49,76 @@ fun ProfileHeader(
     viewModel: ProfileViewModel,
     myProfile: Boolean,
 ) {
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Row(modifier = Modifier.height(IntrinsicSize.Min)) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(top = 12.dp)
-            ) {
-                TextHeadLine(text = "${userData.firstName} ${userData.lastName}")
-                Spacer(modifier = Modifier.height(8.dp))
-                TextBody(text = userData.username)
-            }
-            UserAvatar(
-                avatarURL = userData.avatarURL!!,
-                size = 64.dp
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        TextBody(
-            text = "${userData.followers} followers",
-            color = Color.Gray,
-            modifier = Modifier.clickable {
-                threadNavController.navigate(
-                    "${FollowerListDestination.FOLLOWER_LIST.route}/${userData.id}"
-                )
-            })
-        Spacer(modifier = Modifier.height(20.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (myProfile) {
-                Button(
-                    onClick = { /*TODO*/ },
-                    rounded = false,
-                    modifier = Modifier.weight(1f),
-                    buttonVariant = ButtonVariant.OUTLINED
-                ) {
-                    TextBody(text = "Edit profile", bold = true)
-                }
-                Button(
-                    onClick = { /*TODO*/ },
-                    rounded = false,
-                    modifier = Modifier.weight(1f),
-                    buttonVariant = ButtonVariant.OUTLINED
-                ) {
-                    TextBody(text = "Share profile", bold = true)
-                }
-            } else {
-                Button(
-                    onClick = {
-                        viewModel.onFollowUser()
-                    },
-                    rounded = false,
-                    modifier = Modifier.weight(1f),
-                    buttonVariant = if (userData.following) ButtonVariant.OUTLINED else ButtonVariant.FILLED
-                ) {
-                    TextBody(
-                        text = if (userData.following) "Following" else "Follow",
-                        color = if (userData.following) Color.Black else Color.White,
-                        bold = true
-                    )
-                }
-                Button(
-                    onClick = { /*TODO*/ },
-                    rounded = false,
-                    modifier = Modifier.weight(1f),
-                    buttonVariant = ButtonVariant.OUTLINED
-                ) {
-                    TextBody(text = "Mention", bold = true)
-                }
-            }
-        }
-    }
+    // Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+    //     Row(modifier = Modifier.height(IntrinsicSize.Min)) {
+    //         Column(
+    //             modifier = Modifier
+    //                 .weight(1f)
+    //                 .padding(top = 12.dp)
+    //         ) {
+    //             TextHeadLine(text = "${userData.firstName} ${userData.lastName}")
+    //             Spacer(modifier = Modifier.height(8.dp))
+    //             TextBody(text = userData.username)
+    //         }
+    //         UserAvatar(
+    //             avatarURL = userData.avatarURL!!,
+    //             size = 64.dp
+    //         )
+    //     }
+    //     Spacer(modifier = Modifier.height(16.dp))
+    //     TextBody(
+    //         text = "${userData.followers} followers",
+    //         color = Color.Gray,
+    //         modifier = Modifier.clickable {
+    //             threadNavController.navigate(
+    //                 "${FollowerListDestination.FOLLOWER_LIST.route}/${userData.id}"
+    //             )
+    //         })
+    //     Spacer(modifier = Modifier.height(20.dp))
+    //     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    //         if (myProfile) {
+    //             Button(
+    //                 onClick = { /*TODO*/ },
+    //                 rounded = false,
+    //                 modifier = Modifier.weight(1f),
+    //                 buttonVariant = ButtonVariant.OUTLINED
+    //             ) {
+    //                 TextBody(text = "Edit profile", bold = true)
+    //             }
+    //             Button(
+    //                 onClick = { /*TODO*/ },
+    //                 rounded = false,
+    //                 modifier = Modifier.weight(1f),
+    //                 buttonVariant = ButtonVariant.OUTLINED
+    //             ) {
+    //                 TextBody(text = "Share profile", bold = true)
+    //             }
+    //         } else {
+    //             Button(
+    //                 onClick = {
+    //                     viewModel.onFollowUser()
+    //                 },
+    //                 rounded = false,
+    //                 modifier = Modifier.weight(1f),
+    //                 buttonVariant = if (userData.following) ButtonVariant.OUTLINED else ButtonVariant.FILLED
+    //             ) {
+    //                 TextBody(
+    //                     text = if (userData.following) "Following" else "Follow",
+    //                     color = if (userData.following) Color.Black else Color.White,
+    //                     bold = true
+    //                 )
+    //             }
+    //             Button(
+    //                 onClick = { /*TODO*/ },
+    //                 rounded = false,
+    //                 modifier = Modifier.weight(1f),
+    //                 buttonVariant = ButtonVariant.OUTLINED
+    //             ) {
+    //                 TextBody(text = "Mention", bold = true)
+    //             }
+    //         }
+    //     }
+    // }
 }
 
 // 1. Profile Screen [Primary]
@@ -128,113 +128,113 @@ fun ProfileScreen(
     userId: Int,
     myProfile: Boolean = userId == GlobalViewModelProvider.getCurrentUserId(),
 ) {
-    val viewModel: ProfileViewModel = remember {
-        ProfileViewModelProvider.getInstance(userId)
-    }
-
-    val threadsData = viewModel.threadsData.data.collectAsState().value
-    val userData = viewModel.userData.data.collectAsState().value
-    val repliesData = viewModel.userRepliesData.data.collectAsState().value
-
-    if (userData != null) {
-        Log.d("re-render", "ProfileScreen re-render")
-        ThreadScaffold(topBar = {
-            ThreadTopBar(
-                threadNavController = threadNavController,
-                actions = {
-                    IconClickable(imageVector = Icons.Outlined.Notifications)
-                    Spacer(modifier = Modifier.width(10.dp))
-                    IconClickable(imageVector = Icons.Outlined.MoreHoriz, onClick = {
-                        threadNavController.navigate(MyProfileDestination.SETTING.route)
-                    })
-                },
-                showDivider = false,
-                showBackButton = !myProfile
-            )
-        }) { paddingValues ->
-            TabRowLayout(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize(),
-                title = { ProfileHeader(threadNavController, userData, viewModel, myProfile) },
-                tabTitles = listOf("Threads", "Replies"),
-                onRefresh = { currentPage ->
-                    viewModel.retrieveUserData()
-                    when (currentPage) {
-                        0 -> {
-                            viewModel.retrieveThreadData()
-                        }
-
-                        1 -> {
-                            viewModel.retrieveRepliesData()
-                        }
-                    }
-                }
-            ) { pageIndex ->
-                when (pageIndex) {
-                    0 -> {
-                        itemsIndexed(threadsData) { index, thread ->
-                            FeedCard(
-                                threadNavController = threadNavController,
-                                threadData = thread,
-                                onFeedCardClick = {
-                                    ThreadDetailsData.setThreadsData(
-                                        viewModel.threadsData,
-                                        index
-                                    )
-                                    threadNavController.navigate(ThreadDestination.THREAD_DETAILS.route)
-                                },
-                                onFavoriteClick = { isFavorite ->
-                                    viewModel.threadsData.favoritePost(
-                                        isFavorite = isFavorite,
-                                        index = index
-                                    )
-                                },
-                                onReplyClick = {
-                                    ThreadDetailsData.setThreadsData(
-                                        viewModel.threadsData,
-                                        index
-                                    )
-                                    threadNavController.navigate(ThreadDestination.REPLY_THREAD.route)
-                                }
-                            )
-                        }
-                    }
-
-                    1 -> {
-                        if (repliesData.isEmpty()) {
-                            viewModel.retrieveRepliesData()
-                        } else {
-                            repliesData.forEachIndexed { index, replies ->
-                                lazyThreadDetailsCard(
-                                    threadNavController = threadNavController,
-                                    onFavoriteClick = { isFavorite ->
-                                        viewModel.userRepliesData.favoritePost(
-                                            isFavorite,
-                                            index
-                                        )
-                                    },
-                                    onFavoriteReplyClick = { isFavorite: Boolean, threadReplyIndex: Int ->
-                                        viewModel.userRepliesData.favoriteThreadReply(
-                                            isFavorite,
-                                            threadReplyIndex,
-                                            index
-                                        )
-                                    },
-                                    onReplyClick = { },
-                                    onReplyReplyingClick = {},
-                                    onReplyCardClick = {},
-                                    thread = replies.mainThread,
-                                    threadReplies = replies.threadReplies,
-                                    showBottomDivider = true
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    // val viewModel: ProfileViewModel = remember {
+    //     ProfileViewModelProvider.getInstance(userId)
+    // }
+    //
+    // val threadsData = viewModel.threadsData.data.collectAsState().value
+    // val userData = viewModel.userData.data.collectAsState().value
+    // val repliesData = viewModel.userRepliesData.data.collectAsState().value
+    //
+    // if (userData != null) {
+    //     Log.d("re-render", "ProfileScreen re-render")
+    //     ThreadScaffold(topBar = {
+    //         ThreadTopBar(
+    //             threadNavController = threadNavController,
+    //             actions = {
+    //                 IconClickable(imageVector = Icons.Outlined.Notifications)
+    //                 Spacer(modifier = Modifier.width(10.dp))
+    //                 IconClickable(imageVector = Icons.Outlined.MoreHoriz, onClick = {
+    //                     threadNavController.navigate(MyProfileDestination.SETTING.route)
+    //                 })
+    //             },
+    //             showDivider = false,
+    //             showBackButton = !myProfile
+    //         )
+    //     }) { paddingValues ->
+    //         TabRowLayout(
+    //             modifier = Modifier
+    //                 .padding(paddingValues)
+    //                 .fillMaxSize(),
+    //             title = { ProfileHeader(threadNavController, userData, viewModel, myProfile) },
+    //             tabTitles = listOf("Threads", "Replies"),
+    //             onRefresh = { currentPage ->
+    //                 viewModel.retrieveUserData()
+    //                 when (currentPage) {
+    //                     0 -> {
+    //                         viewModel.retrieveThreadData()
+    //                     }
+    //
+    //                     1 -> {
+    //                         viewModel.retrieveRepliesData()
+    //                     }
+    //                 }
+    //             }
+    //         ) { pageIndex ->
+    //             when (pageIndex) {
+    //                 0 -> {
+    //                     itemsIndexed(threadsData) { index, thread ->
+    //                         FeedCard(
+    //                             threadNavController = threadNavController,
+    //                             threadData = thread,
+    //                             onFeedCardClick = {
+    //                                 ThreadDetailsData.setThreadsData(
+    //                                     viewModel.threadsData,
+    //                                     index
+    //                                 )
+    //                                 threadNavController.navigate(ThreadDestination.THREAD_DETAILS.route)
+    //                             },
+    //                             onFavoriteClick = { isFavorite ->
+    //                                 viewModel.threadsData.favoritePost(
+    //                                     isFavorite = isFavorite,
+    //                                     index = index
+    //                                 )
+    //                             },
+    //                             onReplyClick = {
+    //                                 ThreadDetailsData.setThreadsData(
+    //                                     viewModel.threadsData,
+    //                                     index
+    //                                 )
+    //                                 threadNavController.navigate(ThreadDestination.REPLY_THREAD.route)
+    //                             }
+    //                         )
+    //                     }
+    //                 }
+    //
+    //                 1 -> {
+    //                     if (repliesData.isEmpty()) {
+    //                         viewModel.retrieveRepliesData()
+    //                     } else {
+    //                         repliesData.forEachIndexed { index, replies ->
+    //                             lazyThreadDetailsCard(
+    //                                 threadNavController = threadNavController,
+    //                                 onFavoriteClick = { isFavorite ->
+    //                                     viewModel.userRepliesData.favoritePost(
+    //                                         isFavorite,
+    //                                         index
+    //                                     )
+    //                                 },
+    //                                 onFavoriteReplyClick = { isFavorite: Boolean, threadReplyIndex: Int ->
+    //                                     viewModel.userRepliesData.favoriteThreadReply(
+    //                                         isFavorite,
+    //                                         threadReplyIndex,
+    //                                         index
+    //                                     )
+    //                                 },
+    //                                 onReplyClick = { },
+    //                                 onReplyReplyingClick = {},
+    //                                 onReplyCardClick = {},
+    //                                 thread = replies.mainThread,
+    //                                 threadReplies = replies.threadReplies,
+    //                                 showBottomDivider = true
+    //                             )
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 }
 
 // 2. Thread Details Screen [Secondary]

@@ -52,7 +52,7 @@ object ProfileViewModelProvider : ThreadViewModelProvider {
 
 class ProfileViewModel(val targetUserId: Int) : ViewModel() {
     val userData = UserData(targetUserId)
-    val threadsData = ThreadsData()
+    // val threadsData = ThreadsData()
     val userRepliesData = UserRepliesData(targetUserId)
 
     init {
@@ -65,7 +65,7 @@ class ProfileViewModel(val targetUserId: Int) : ViewModel() {
     }
 
     fun retrieveThreadData() {
-        threadsData.retrieveUserThreadsData(targetUserId)
+        // threadsData.retrieveUserThreadsData(targetUserId)
     }
 
     fun retrieveUserData() {

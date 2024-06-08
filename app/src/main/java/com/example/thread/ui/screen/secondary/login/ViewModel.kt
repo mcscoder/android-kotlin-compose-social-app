@@ -1,16 +1,13 @@
 package com.example.thread.ui.screen.secondary.login
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.thread.data.model.user.LoginRequest
-import com.example.thread.data.model.user.User
+import com.example.thread.data.model.user.UserLoginRequest
 import com.example.thread.data.repository.user.UserRepository
-import com.example.thread.ui.screen.GlobalViewModelProvider
 import com.example.thread.ui.screen.ThreadViewModelProvider
 import com.example.thread.ui.screen.ViewModelProviderManager
 import kotlinx.coroutines.CoroutineScope
@@ -62,21 +59,29 @@ class LoginViewModel(private val userRepository: UserRepository = UserRepository
     private fun fetchUser(onLoginSuccess: CoroutineScope.(userId: Int) -> Unit = {}) {
         // Dispatchers.IO for a network request
         viewModelScope.launch(context = Dispatchers.IO) {
-            val loginRequest = LoginRequest(username.text, password.text)
+            val loginRequest = UserLoginRequest(username.text, password.text)
+            val userId = userRepository.loginAuthentication(loginRequest)
 
-            userRepository.loginAuthentication(
-                loginRequest = loginRequest,
-                onResponse = { status, data ->
-                    Log.d("fetch user", "here1")
-                    if (status) {
-                        val user: User = data.user!!
-                        GlobalViewModelProvider.init(user)
-                        onLoginSuccess(user.id)
-                    } else {
-                    }
+            if (userId != null) {
+                // Authentication successfully
+                onLoginSuccess(userId)
+            } else {
+                // Authentication failed
+            }
 
-                    Log.d("authentication", "re-render")
-                })
+            // userRepository.loginAuthentication(
+            //     requestBody = loginRequest,
+            //     onResponse = { status, data ->
+            //         Log.d("fetch user", "here1")
+            //         if (status) {
+            //             val user: User = data.user!!
+            //             GlobalViewModelProvider.init(user)
+            //             onLoginSuccess(user.userId)
+            //         } else {
+            //         }
+            //
+            //         Log.d("authentication", "re-render")
+            //     })
         }
     }
 }

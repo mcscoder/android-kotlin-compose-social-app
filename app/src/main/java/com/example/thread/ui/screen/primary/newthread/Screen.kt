@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import com.example.thread.data.model.thread.Thread
+import com.example.thread.data.model.thread.ThreadResponse
 import com.example.thread.ui.component.scaffold.ThreadScaffold
 import com.example.thread.ui.component.button.Button
 import com.example.thread.ui.component.feed.FeedCard
@@ -28,7 +28,8 @@ fun NewThreadScreen(
     viewModel: NewThreadViewModel,
     topBarTitle: String = "New Thread",
     onPostClick: () -> Unit = { viewModel.postThread() },
-    threadReply: Thread? = null,
+    onNavigateUp: () -> Unit = {},
+    mainThread: ThreadResponse? = null,
 ) {
     ThreadScaffold(
         modifier = Modifier.imePadding(),
@@ -44,7 +45,8 @@ fun NewThreadScreen(
                         TextBody(text = "Post", color = Color.White, bold = true)
                     }
                 },
-                showBackButton = threadReply != null
+                showBackButton = mainThread != null,
+                onNavigateUp = onNavigateUp
             )
         },
         bottomBar = {
@@ -53,10 +55,10 @@ fun NewThreadScreen(
     ) { paddingValues ->
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
             item {
-                if (threadReply != null) {
+                if (mainThread != null) {
                     FeedCard(
                         threadNavController = threadNavController,
-                        threadData = threadReply,
+                        threadData = mainThread,
                         showActionButton = false,
                         showVerticalDivider = true
                     )
@@ -74,45 +76,29 @@ fun NewThreadScreen(
 }
 
 @Composable
-fun ReplyThreadScreen(threadNavController: ThreadNavController) {
-    val threadsData = ThreadDetailsData.threadsData
-    val threadIndex = ThreadDetailsData.threadIndex
-    if (threadsData != null && threadIndex != null) {
-        val thread = threadsData.data.collectAsState().value[threadIndex]
-        val viewModel = remember {
-            NewThreadViewModel(threadNavController)
-        }
-        NewThreadScreen(
-            threadNavController = threadNavController,
-            viewModel = viewModel,
-            topBarTitle = "Reply",
-            threadReply = thread,
-            onPostClick = {
-                viewModel.postThreadReply(thread.content.id)
-            }
-        )
+fun ReplyToThreadScreen(
+    threadNavController: ThreadNavController,
+    threadsDataIndex: Int,
+    threadIndex: Int,
+    threadType: Int,
+) {
+    val thread =
+        ThreadDetailsData.getThreadsData(threadsDataIndex)!!.data.collectAsState().value[threadIndex]
+    val viewModel = remember {
+        NewThreadViewModel(threadNavController)
     }
-}
-
-@Composable
-fun ReplyThreadReplyingScreen(threadNavController: ThreadNavController) {
-    val threadRepliesData = ThreadDetailsData.threadRepliesData
-    val threadReplyIndex = ThreadDetailsData.threadReplyIndex
-    if (threadRepliesData != null && threadReplyIndex != null) {
-        val threadReply = threadRepliesData.data.collectAsState().value[threadReplyIndex]
-        val viewModel = remember {
-            NewThreadViewModel(threadNavController)
+    NewThreadScreen(
+        threadNavController = threadNavController,
+        viewModel = viewModel,
+        topBarTitle = "Reply",
+        mainThread = thread,
+        onPostClick = {
+            viewModel.postReply(threadType, thread.content.threadId)
+        },
+        onNavigateUp = {
+            ThreadDetailsData.removeThreadsDataAt(threadsDataIndex)
         }
-        NewThreadScreen(
-            threadNavController = threadNavController,
-            viewModel = viewModel,
-            topBarTitle = "Reply",
-            threadReply = threadReply,
-            onPostClick = {
-                viewModel.postThreadReplyingReply(threadReply.content.id)
-            }
-        )
-    }
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)

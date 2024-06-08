@@ -63,15 +63,15 @@ fun ActivityScreen(threadNavController: ThreadNavController, modifier: Modifier 
                             when (reply.type) {
                                 ReplyType.REPLY.ordinal -> {
                                     // Navigate to main Thread details
-                                    val threadsData: MainThreads = ThreadsData()
-                                    threadsData.retrieveThreadById(
-                                        reply.reply.content.mainThreadId!!
-                                    ) {
-                                        launch(Dispatchers.Main) {
-                                            ThreadDetailsData.setThreadsData(threadsData, 0)
-                                            threadNavController.navigate(ThreadDestination.THREAD_DETAILS.route)
-                                        }
-                                    }
+                                    // val threadsData = ThreadsData()
+                                    // threadsData.retrieveThreadById(
+                                    //     reply.reply.content.mainThreadId!!
+                                    // ) {
+                                    //     launch(Dispatchers.Main) {
+                                    //         ThreadDetailsData.setThreadsData(threadsData, 0)
+                                    //         threadNavController.navigate(ThreadDestination.THREAD_DETAILS.route)
+                                    //     }
+                                    // }
                                 }
 
                                 ReplyType.REPLYING_REPLY.ordinal -> {
@@ -91,10 +91,10 @@ fun ActivityScreen(threadNavController: ThreadNavController, modifier: Modifier 
                         FollowActivityItem(
                             followActivity = followActivity,
                             onClick = {
-                                threadNavController.navigateToUserProfile(followActivity.user.id)
+                                threadNavController.navigateToUserProfile(followActivity.user.userId)
                             },
                             onActionClick = {
-                                viewModel.follows.onFollowUser(followActivity.user.id) { currentUserId ->
+                                viewModel.follows.onFollowUser(followActivity.user.userId) { currentUserId ->
                                     viewModel.follows.retrieveFollowersData(currentUserId)
                                 }
                             }

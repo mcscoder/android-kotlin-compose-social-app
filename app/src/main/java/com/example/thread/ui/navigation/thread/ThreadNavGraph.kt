@@ -1,58 +1,66 @@
 package com.example.thread.ui.navigation.thread
 
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import com.example.thread.data.viewmodel.threaddata.MainThreads
-import com.example.thread.data.viewmodel.threaddata.ThreadReplies
+import androidx.navigation.navArgument
+import com.example.thread.data.model.thread.ThreadType
+import com.example.thread.data.viewmodel.threaddata.ThreadsData
 import com.example.thread.ui.navigation.NavigationType
 import com.example.thread.ui.navigation.ThreadNavController
 import com.example.thread.ui.navigation.getNavRoute
-import com.example.thread.ui.screen.primary.newthread.ReplyThreadReplyingScreen
-import com.example.thread.ui.screen.primary.newthread.ReplyThreadScreen
-import com.example.thread.ui.screen.secondary.threaddetails.MainThreadDetailsScreen
-import com.example.thread.ui.screen.secondary.threaddetails.ReplyDetailsScreen
-
-object ThreadDetailsData {
-    var threadsData: MainThreads? = null
-        private set
-    var threadIndex: Int? = null
-        private set
-
-    var threadRepliesData: ThreadReplies? = null
-        private set
-    var threadReplyIndex: Int? = null
-        private set
-
-    fun setThreadsData(newThreadsData: MainThreads, newThreadIndex: Int) {
-        threadsData = newThreadsData
-        threadIndex = newThreadIndex
-    }
-
-    fun setThreadRepliesData(newThreadRepliesData: ThreadReplies, newThreadReplyIndex: Int) {
-        threadRepliesData = newThreadRepliesData
-        threadReplyIndex = newThreadReplyIndex
-    }
-}
+import com.example.thread.ui.screen.primary.newthread.ReplyToThreadScreen
+import com.example.thread.ui.screen.secondary.threaddetails.ThreadDetailsScreen
 
 enum class ThreadDestination(val route: String) {
     DEFAULT("thread"),
     THREAD_DETAILS(getNavRoute(NavigationType.SECONDARY, DEFAULT.route, "1")),
-    REPLY_THREAD(getNavRoute(NavigationType.SECONDARY, DEFAULT.route, "2")),
-    REPLY_THREAD_REPLYING(getNavRoute(NavigationType.SECONDARY, DEFAULT.route, "3")),
-    THREAD_REPLY_DETAILS(getNavRoute(NavigationType.SECONDARY, DEFAULT.route, "4"))
+    REPLY_TO_THREAD(getNavRoute(NavigationType.SECONDARY, DEFAULT.route, "2")),
+}
+
+object ThreadDetailsData {
+    private val threadsDataList: MutableList<ThreadsData?> = mutableListOf()
+
+    fun setThreadsData(threadsData: ThreadsData): Int {
+        threadsDataList.add(threadsData)
+        return threadsDataList.size - 1
+    }
+
+    fun getThreadsData(threadsDataIndex: Int): ThreadsData? {
+        return threadsDataList[threadsDataIndex]
+    }
+
+    fun removeThreadsDataAt(threadsDataIndex: Int) {
+        threadsDataList[threadsDataIndex] = null
+    }
 }
 
 fun NavGraphBuilder.threadNavGraph(threadNavController: ThreadNavController) {
-    composable(ThreadDestination.THREAD_DETAILS.route) {
-        MainThreadDetailsScreen(threadNavController)
+    composable(
+        route = "${ThreadDestination.THREAD_DETAILS.route}/{threadsDataIndex}/{threadIndex}",
+        arguments = listOf(
+            navArgument("threadsDataIndex") { type = NavType.IntType },
+            navArgument("threadIndex") { type = NavType.IntType }),
+    ) { entry ->
+        val threadsDataIndex = entry.arguments?.getInt(("threadsDataIndex"))
+        val threadIndex = entry.arguments?.getInt(("threadIndex"))
+        if (threadsDataIndex != null && threadIndex != null) {
+            ThreadDetailsScreen(threadNavController, threadsDataIndex, threadIndex)
+        }
     }
-    composable(ThreadDestination.REPLY_THREAD.route) {
-        ReplyThreadScreen(threadNavController)
-    }
-    composable(ThreadDestination.REPLY_THREAD_REPLYING.route) {
-        ReplyThreadReplyingScreen(threadNavController)
-    }
-    composable(ThreadDestination.THREAD_REPLY_DETAILS.route) {
-        ReplyDetailsScreen(threadNavController)
+    composable(
+        route = "${ThreadDestination.REPLY_TO_THREAD.route}/{threadsDataIndex}/{threadIndex}/{threadType}",
+        arguments = listOf(
+            navArgument("threadsDataIndex") { type = NavType.IntType },
+            navArgument("threadIndex") { type = NavType.IntType },
+            navArgument("threadType") { type = NavType.IntType },
+        ),
+    ) {entry ->
+        val threadsDataIndex = entry.arguments?.getInt(("threadsDataIndex"))
+        val threadIndex = entry.arguments?.getInt(("threadIndex"))
+        val threadType = entry.arguments?.getInt(("threadType"))
+        if (threadsDataIndex != null && threadIndex != null && threadType != null) {
+            ReplyToThreadScreen(threadNavController, threadsDataIndex, threadIndex, threadType)
+        }
     }
 }

@@ -68,7 +68,7 @@ fun NewThreadInput(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            UserAvatar(avatarURL = user.avatarURL!!)
+            UserAvatar(avatarURL = user.imageUrl)
             ThreadVerticalDivider()
         }
         Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {

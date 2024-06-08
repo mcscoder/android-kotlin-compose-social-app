@@ -1,38 +1,32 @@
 package com.example.thread.data.model.user
 
-import com.example.thread.data.model.thread.Thread
+import com.example.thread.data.model.thread.ThreadResponse
 import com.google.gson.annotations.SerializedName
 
 data class User(
-    @field:SerializedName("id")
-    val id: Int = 0,
-
-    @field:SerializedName("username")
+    val userId: Int = 0,
     val username: String = "",
-
-    @field:SerializedName("firstName")
     val firstName: String = "",
-
-    @field:SerializedName("lastName")
     val lastName: String = "",
+    val imageUrl: String = "",
+    // val following: Boolean = false,
+    // val followers: Int = 0,
+)
 
-    @field:SerializedName("avatarURL")
-    val avatarURL: String? = null,
-
-    val following: Boolean = false,
-
-    val followers: Int = 0,
+data class UserResponse(
+    val user: User,
+    val isFollowing: Boolean,
 )
 
 data class UserReplies(
     @field:SerializedName("mainThread")
-    val mainThread: Thread,
+    val mainThread: ThreadResponse,
 
     @field:SerializedName("threadReplies")
-    val threadReplies: List<Thread>,
+    val threadReplies: List<ThreadResponse>,
 )
 
-data class LoginRequest(
+data class UserLoginRequest(
     val username: String,
     val password: String,
 )

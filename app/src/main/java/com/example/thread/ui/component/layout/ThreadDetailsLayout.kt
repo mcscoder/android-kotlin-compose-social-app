@@ -5,7 +5,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.thread.data.model.thread.Thread
+import com.example.thread.data.model.thread.ThreadResponse
 import com.example.thread.ui.component.common.ThreadHorizontalDivider
 import com.example.thread.ui.component.feed.FeedCard
 import com.example.thread.ui.component.feed.FeedCardDetails
@@ -16,21 +16,21 @@ fun LazyThreadDetailsLayout(
     modifier: Modifier = Modifier,
     threadNavController: ThreadNavController,
     onFavoriteClick: (isFavorite: Boolean) -> Unit,
-    onFavoriteReplyClick: (isFavorite: Boolean, threadReplyIndex: Int) -> Unit,
-    onReplyClick: () -> Unit,
-    onReplyReplyingClick: (threadReplyingIndex: Int) -> Unit,
+    onFavoriteReplyClick: (isFavorited: Boolean, replyIndex: Int) -> Unit,
+    onCommentClick: () -> Unit,
+    onReplyClick: (threadReplyingIndex: Int) -> Unit,
     onReplyCardClick: (index: Int) -> Unit,
     ableToReply: Boolean = true,
-    thread: Thread,
-    threadReplies: List<Thread>,
+    thread: ThreadResponse,
+    threadReplies: List<ThreadResponse>,
 ) {
     LazyColumn(modifier = modifier) {
         lazyThreadDetailsCard(
             threadNavController,
             onFavoriteClick,
             onFavoriteReplyClick,
+            onCommentClick,
             onReplyClick,
-            onReplyReplyingClick,
             onReplyCardClick,
             ableToReply,
             thread,
@@ -47,8 +47,8 @@ fun LazyListScope.lazyThreadDetailsCard(
     onReplyReplyingClick: (threadReplyingIndex: Int) -> Unit,
     onReplyCardClick: (index: Int) -> Unit,
     ableToReply: Boolean = true,
-    thread: Thread,
-    threadReplies: List<Thread>,
+    thread: ThreadResponse,
+    threadReplies: List<ThreadResponse>,
     showBottomDivider: Boolean = false,
 ) {
     item {

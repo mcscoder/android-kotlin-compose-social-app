@@ -78,26 +78,19 @@ fun ThreadApp() {
     val userPreferences = UserPreferences(LocalContext.current)
     val userId = userPreferences.userId.collectAsState(initial = 0).value
 
-    var isReady by remember {
-        mutableStateOf(false)
-    }
-
     if (userId == 0) {
+        // Screen loading at initial value
         LoadingScreen()
+    } else if (userId == null) {
+        // After update if userId still null
+        LoginScreen(onLoginSuccess = { userPreferences.setUser(it) })
     } else {
-        if (userId == null) {
-            isReady = false
-            LoginScreen(onLoginSuccess = { userPreferences.setUser(it) })
-        } else {
-            isReady = true
-        }
-    }
-
-    if (isReady && userId != null) {
+        // Login authentication success
         val globalViewModel = GlobalViewModelProvider.init(userId)
         val user = globalViewModel.user.collectAsState().value
-        if (user.id == 0) {
-        } else {
+        if (user.userId != 0) {
+            // Every data about user has been fetched in GlobalViewModel
+            // App now is ready to use
             MainApplication()
         }
     }

@@ -1,21 +1,18 @@
 package com.example.thread.ui.screen.secondary.threaddetails
 
 import androidx.lifecycle.ViewModel
-import com.example.thread.data.viewmodel.threaddata.ThreadReplies
 import com.example.thread.data.viewmodel.threaddata.ThreadsData
 
-class ThreadDetailsViewModel(private val threadId: Int) : ViewModel() {
-    val threadRepliesData: ThreadReplies = ThreadsData()
+class ThreadDetailsViewModel(val threadsData: ThreadsData, threadIndex: Int) :
+    ViewModel() {
+    val repliesData = ThreadsData()
+    private val mainPostData = threadsData.data.value[threadIndex]
 
     init {
-        retrieveThreadRepliesData()
+        getReplies()
     }
 
-    fun favoriteThreadReply(isFavorite: Boolean, index: Int) {
-        threadRepliesData.favoriteThreadReply(isFavorite, index)
-    }
-
-    private fun retrieveThreadRepliesData() {
-        threadRepliesData.retrieveThreadRepliesData(threadId)
+    private fun getReplies() {
+        repliesData.getReplies(mainPostData.content.threadId)
     }
 }

@@ -6,9 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.thread.data.model.thread.ThreadType
 import com.example.thread.data.repository.thread.ThreadRepository
 import com.example.thread.ui.navigation.ThreadNavController
-import com.example.thread.ui.screen.GlobalViewModelProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -22,8 +22,6 @@ class NewThreadViewModel(
     private val threadNavController: ThreadNavController,
     private val threadRepository: ThreadRepository = ThreadRepository(),
 ) : ViewModel() {
-    private val currentUser = GlobalViewModelProvider.getCurrentUserId()
-
     var textContent by mutableStateOf(TextFieldValue())
         private set
     var imageFiles by mutableStateOf<List<ByteArray>>(emptyList())
@@ -43,13 +41,14 @@ class NewThreadViewModel(
         imageFiles = newImageFiles
     }
 
-    fun postThread() {
+    fun postThread(threadType: ThreadType = ThreadType.POST, mainId: Int? = null) {
         viewModelScope.launch(context = Dispatchers.IO) {
             if (textContent.text.isNotEmpty()) {
                 threadRepository.postThread(
                     text = textContent.text,
+                    type = threadType.ordinal,
                     imageFiles = imageFiles,
-                    userId = currentUser,
+                    mainId = mainId
                 )
                 launch(context = Dispatchers.Main) {
                     threadNavController.navigateUp()
@@ -58,35 +57,11 @@ class NewThreadViewModel(
         }
     }
 
-    fun postThreadReply(mainThreadId: Int) {
-        viewModelScope.launch(context = Dispatchers.IO) {
-            if (textContent.text.isNotEmpty()) {
-                threadRepository.postThreadReply(
-                    text = textContent.text,
-                    imageFiles = imageFiles,
-                    userId = currentUser,
-                    mainThreadId = mainThreadId,
-                )
-                launch(context = Dispatchers.Main) {
-                    threadNavController.navigateUp()
-                }
-            }
+    fun postReply(mainThreadType: Int, mainId: Int? = null) {
+        var type: ThreadType = ThreadType.COMMENT
+        when (mainThreadType) {
+            ThreadType.COMMENT.ordinal -> type = ThreadType.REPLY
         }
-    }
-
-    fun postThreadReplyingReply(threadReplyId: Int) {
-        viewModelScope.launch(context = Dispatchers.IO) {
-            if (textContent.text.isNotEmpty()) {
-                threadRepository.postThreadReplyingReply(
-                    text = textContent.text,
-                    imageFiles = imageFiles,
-                    userId = currentUser,
-                    threadReplyId = threadReplyId
-                )
-                launch(context = Dispatchers.Main) {
-                    threadNavController.navigateUp()
-                }
-            }
-        }
+        postThread(type, mainId)
     }
 }

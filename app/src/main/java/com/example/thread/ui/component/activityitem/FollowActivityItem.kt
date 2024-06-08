@@ -20,7 +20,7 @@ fun FollowActivityItem(
 ) {
     ActivityItem(
         modifier = modifier,
-        avatarURL = followActivity.user.avatarURL!!,
+        avatarURL = followActivity.user.imageUrl,
         title = followActivity.user.username,
         timeStamp = followActivity.dateTime.createdAt,
         description = {
@@ -37,11 +37,11 @@ fun FollowActivityItem(
                 rounded = false,
                 disable = true
             ) {
-                TextBody(
-                    text = if (followActivity.user.following) "Following" else "Follow",
-                    bold = true,
-                    color = if (followActivity.user.following) Color.Gray else Color.Black
-                )
+                // TextBody(
+                //     text = if (followActivity.user.following) "Following" else "Follow",
+                //     bold = true,
+                //     color = if (followActivity.user.following) Color.Gray else Color.Black
+                // )
             }
         })
 }

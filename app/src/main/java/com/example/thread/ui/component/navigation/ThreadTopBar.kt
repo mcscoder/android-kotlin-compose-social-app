@@ -25,6 +25,7 @@ fun ThreadTopBar(
     threadNavController: ThreadNavController,
     title: String = "",
     actions: @Composable RowScope.() -> Unit = {},
+    onNavigateUp: () -> Unit = {},
     showDivider: Boolean = true,
     showBackButton: Boolean = true,
 ) {
@@ -42,6 +43,7 @@ fun ThreadTopBar(
                         imageVector = Icons.Rounded.ArrowBack,
                         onClick = {
                             threadNavController.navigateUp()
+                            onNavigateUp()
                         }
                     )
                 }
