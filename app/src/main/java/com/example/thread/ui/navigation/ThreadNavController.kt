@@ -1,5 +1,6 @@
 package com.example.thread.ui.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Stable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
@@ -38,7 +39,7 @@ class ThreadNavController(val navController: NavHostController) {
     }
 
     fun navigateToUserProfile(userId: Int) {
-        if (userId == GlobalViewModelProvider.getInstance().getUser().userId) {
+        if (userId == GlobalViewModelProvider.getCurrentUserId()) {
             navigateToBottomBarItem(MyProfileDestination.START_DESTINATION.route)
         } else {
             navigate("${ProfileDestination.PROFILE.route}/${userId}")
@@ -46,9 +47,8 @@ class ThreadNavController(val navController: NavHostController) {
     }
 
     fun navigateToThreadDetails(threadsData: ThreadsData, threadIndex: Int) {
-        val threadsDataIndex =
-            ThreadDetailsData.setThreadsData(threadsData)
-        navigate("${ThreadDestination.THREAD_DETAILS.route}/${threadsDataIndex}/${threadIndex}")
+        val threadDetailsIndex = ThreadDetailsData.setThreadDetails(threadsData, threadIndex)
+        navigate("${ThreadDestination.THREAD_DETAILS.route}/${threadDetailsIndex}")
     }
 
     fun navigateToReplyToThread(threadsData: ThreadsData, threadIndex: Int) {

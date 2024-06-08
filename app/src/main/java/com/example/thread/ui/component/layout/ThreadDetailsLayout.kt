@@ -15,24 +15,30 @@ import com.example.thread.ui.navigation.ThreadNavController
 fun LazyThreadDetailsLayout(
     modifier: Modifier = Modifier,
     threadNavController: ThreadNavController,
-    onFavoriteClick: (isFavorite: Boolean) -> Unit,
-    onFavoriteReplyClick: (isFavorited: Boolean, replyIndex: Int) -> Unit,
-    onCommentClick: () -> Unit,
-    onReplyClick: (threadReplyingIndex: Int) -> Unit,
+    onFavoriteToPostClick: (isFavorited: Boolean) -> Unit,
+    onReplyToPostClick: () -> Unit,
+    onPostCardClick: () -> Unit,
+    ableToClickPostCard: Boolean = false,
+
+    onFavoriteToReplyClick: (isFavorite: Boolean, replyIndex: Int) -> Unit,
+    onReplyToReplyClick: (replyIndex: Int) -> Unit,
     onReplyCardClick: (index: Int) -> Unit,
-    ableToReply: Boolean = true,
+    ableToReplyToReply: Boolean = true,
+
     thread: ThreadResponse,
-    threadReplies: List<ThreadResponse>,
+    threadReplies: List<ThreadResponse>
 ) {
     LazyColumn(modifier = modifier) {
         lazyThreadDetailsCard(
             threadNavController,
-            onFavoriteClick,
-            onFavoriteReplyClick,
-            onCommentClick,
-            onReplyClick,
+            onFavoriteToPostClick,
+            onReplyToPostClick,
+            onPostCardClick,
+            ableToClickPostCard,
+            onFavoriteToReplyClick,
+            onReplyToReplyClick,
             onReplyCardClick,
-            ableToReply,
+            ableToReplyToReply,
             thread,
             threadReplies,
         )
@@ -41,12 +47,16 @@ fun LazyThreadDetailsLayout(
 
 fun LazyListScope.lazyThreadDetailsCard(
     threadNavController: ThreadNavController,
-    onFavoriteClick: (isFavorite: Boolean) -> Unit,
-    onFavoriteReplyClick: (isFavorite: Boolean, threadReplyIndex: Int) -> Unit,
-    onReplyClick: () -> Unit,
-    onReplyReplyingClick: (threadReplyingIndex: Int) -> Unit,
+    onFavoriteToPostClick: (isFavorited: Boolean) -> Unit,
+    onReplyToPostClick: () -> Unit,
+    onPostCardClick: () -> Unit,
+    ableToClickPostCard: Boolean = false,
+
+    onFavoriteToReplyClick: (isFavorite: Boolean, replyIndex: Int) -> Unit,
+    onReplyToReplyClick: (replyIndex: Int) -> Unit,
     onReplyCardClick: (index: Int) -> Unit,
-    ableToReply: Boolean = true,
+    ableToReplyToReply: Boolean = true,
+
     thread: ThreadResponse,
     threadReplies: List<ThreadResponse>,
     showBottomDivider: Boolean = false,
@@ -54,10 +64,12 @@ fun LazyListScope.lazyThreadDetailsCard(
     item {
         FeedCardDetails(
             threadNavController = threadNavController,
-            onFavoriteClick = onFavoriteClick,
-            onReplyClick = onReplyClick,
+            onFavoriteClick = onFavoriteToPostClick,
+            onFeedCardClick = onPostCardClick,
+            onReplyClick = onReplyToPostClick,
             thread = thread,
-            showHorizontalDivider = !showBottomDivider
+            showHorizontalDivider = !showBottomDivider,
+            clickable = ableToClickPostCard
         )
     }
     itemsIndexed(threadReplies) { index, threadReply ->
@@ -65,14 +77,14 @@ fun LazyListScope.lazyThreadDetailsCard(
             threadNavController = threadNavController,
             threadData = threadReply,
             onFavoriteClick = { isFavorite ->
-                onFavoriteReplyClick(isFavorite, index)
+                onFavoriteToReplyClick(isFavorite, index)
             },
-            onReplyClick = { onReplyReplyingClick(index) },
+            onReplyClick = { onReplyToReplyClick(index) },
             onFeedCardClick = {
                 onReplyCardClick(index)
             },
             showVerticalDivider = true,
-            ableToReply = ableToReply,
+            ableToReply = ableToReplyToReply,
             showHorizontalDivider = !showBottomDivider
         )
     }

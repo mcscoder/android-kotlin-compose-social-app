@@ -3,6 +3,7 @@ package com.example.thread.data
 import com.example.thread.data.model.activity.FollowActivity
 import com.example.thread.data.model.activity.ReplyActivity
 import com.example.thread.data.model.response.ResponseMessage
+import com.example.thread.data.model.thread.MainThreadWithRepliesResponse
 import com.example.thread.data.model.thread.ThreadResponse
 import com.example.thread.data.model.thread.ThreadRequest
 import com.example.thread.data.model.user.UserLoginRequest
@@ -71,6 +72,21 @@ interface ApiService {
         @Path("mainId") mainId: Int,
         @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Call<List<ThreadResponse>>
+
+    // 2.6. Get a list of Posts|Comments|Replies by `userId`
+    @GET("threads/user/{type}")
+    fun getThreadsByUserId(
+        @Header("targetUserId") targetUserId: Int,
+        @Path("type") type: Int,
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Call<List<ThreadResponse>>
+
+    // 2.7. Get all Replies by `userId` included Main Thread
+    @GET("threads/replies")
+    fun getMainThreadWithReplies(
+        @Header("targetUserId") targetUserId: Int,
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Call<List<MainThreadWithRepliesResponse>>
 
     // temp
     @GET("thread/replying/reply/{threadReplyId}")

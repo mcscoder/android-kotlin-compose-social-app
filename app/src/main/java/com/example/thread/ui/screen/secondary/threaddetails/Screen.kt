@@ -1,6 +1,5 @@
 package com.example.thread.ui.screen.secondary.threaddetails
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.NotificationsNone
@@ -20,15 +19,13 @@ import com.example.thread.ui.navigation.thread.ThreadDetailsData
 @Composable
 fun ThreadDetailsScreen(
     threadNavController: ThreadNavController,
-    threadsDataIndex: Int,
-    threadIndex: Int,
+    threadDetailsIndex: Int,
 ) {
     val viewModel = remember {
-        val threadsData = ThreadDetailsData.getThreadsData(threadsDataIndex)!!
-        ThreadDetailsViewModel(threadsData, threadIndex)
+        ThreadDetailsData.getThreadDetails(threadDetailsIndex)!!
     }
 
-    val mainThread = viewModel.threadsData.data.collectAsState().value[threadIndex]
+    val mainThread = viewModel.threadsData.data.collectAsState().value[viewModel.threadIndex]
     val replies = viewModel.repliesData.data.collectAsState().value
 
     ThreadScaffold(
@@ -43,7 +40,7 @@ fun ThreadDetailsScreen(
                     )
                 },
                 onNavigateUp = {
-                    ThreadDetailsData.removeThreadsDataAt(threadsDataIndex)
+                    ThreadDetailsData.removeThreadDetailsAt(threadDetailsIndex)
                 }
             )
         }
@@ -51,19 +48,19 @@ fun ThreadDetailsScreen(
         Surface(modifier = Modifier.padding(paddingValues)) {
             LazyThreadDetailsLayout(
                 threadNavController = threadNavController,
-                onFavoriteClick = { isFavorited ->
-                    viewModel.threadsData.favoriteThread(isFavorited, threadIndex)
+                onFavoriteToPostClick = { isFavorited ->
+                    viewModel.threadsData.favoriteThread(isFavorited, viewModel.threadIndex)
                 },
-                onFavoriteReplyClick = { isFavorited, replyIndex ->
+                onFavoriteToReplyClick = { isFavorited, replyIndex ->
                     viewModel.repliesData.favoriteThread(isFavorited, replyIndex)
                 },
-                onCommentClick = {
+                onReplyToPostClick = {
                     threadNavController.navigateToReplyToThread(
                         viewModel.threadsData,
-                        threadIndex
+                        viewModel.threadIndex
                     )
                 },
-                onReplyClick = { replyIndex ->
+                onReplyToReplyClick = { replyIndex ->
                     threadNavController.navigateToReplyToThread(
                         viewModel.repliesData,
                         replyIndex,
@@ -77,7 +74,8 @@ fun ThreadDetailsScreen(
                         )
                     }
                 },
-                ableToReply = mainThread.content.type == ThreadType.POST.ordinal,
+                onPostCardClick = {},
+                ableToReplyToReply = mainThread.content.type == ThreadType.POST.ordinal,
                 thread = mainThread,
                 threadReplies = replies
             )

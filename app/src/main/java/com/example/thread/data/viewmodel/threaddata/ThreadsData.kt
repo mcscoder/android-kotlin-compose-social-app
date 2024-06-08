@@ -12,10 +12,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ThreadsData {
-    private val _data = MutableStateFlow<List<ThreadResponse>>(emptyList())
+class ThreadsData(threadResponses: List<ThreadResponse> = emptyList()) {
+    private val _data = MutableStateFlow<List<ThreadResponse>>(threadResponses)
     val data: StateFlow<List<ThreadResponse>> = _data.asStateFlow()
-    private val currentUserId = GlobalViewModelProvider.getInstance().getUser().userId
 
     private val threadRepository = ThreadRepository()
 
@@ -35,6 +34,10 @@ class ThreadsData {
             )
             updatedData
         }
+    }
+
+    fun setThreadResponsesData(responses: List<ThreadResponse>) {
+        _data.update { responses }
     }
 
     fun getRandomThreads(reload: Boolean = false) {
@@ -65,6 +68,13 @@ class ThreadsData {
         CoroutineScope(Dispatchers.IO).launch {
             val replies = threadRepository.getReplies(mainId)
             _data.update { replies }
+        }
+    }
+
+    fun getThreadsByUserId(targetUserId: Int, type: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val threads = threadRepository.getThreadsByUserId(targetUserId, type)
+            _data.update { threads }
         }
     }
 }

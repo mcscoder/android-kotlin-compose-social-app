@@ -17,15 +17,7 @@ enum class MyProfileDestination(val route: String) {
     START_DESTINATION(
         getNavRoute(NavigationType.PRIMARY, ThreadNavigationItem.MY_PROFILE.route)
     ),
-    THREAD_DETAILS(
-        getNavRoute(
-            NavigationType.SECONDARY,
-            ThreadNavigationItem.MY_PROFILE.route,
-            "1"
-        )
-    ),
-    REPLY_THREAD(getNavRoute(NavigationType.SECONDARY, ThreadNavigationItem.MY_PROFILE.route, "2")),
-    SETTING(getNavRoute(NavigationType.SECONDARY, ThreadNavigationItem.MY_PROFILE.route, "3"))
+    SETTING(getNavRoute(NavigationType.SECONDARY, ThreadNavigationItem.MY_PROFILE.route, "1"))
 }
 
 fun NavGraphBuilder.myProfileNavGraph(threadNavController: ThreadNavController) {
@@ -37,38 +29,11 @@ fun NavGraphBuilder.myProfileNavGraph(threadNavController: ThreadNavController) 
         composable(MyProfileDestination.START_DESTINATION.route) {
             ProfileScreen(
                 threadNavController,
-                GlobalViewModelProvider.getInstance().getUser().userId
+                GlobalViewModelProvider.getCurrentUserId()
             )
         }
 
-        // 2. Thread Details Screen [Secondary]
-        // composable(
-        //     route = "${MyProfileDestination.THREAD_DETAILS.route}/{threadIndex}",
-        //     arguments = listOf(navArgument("threadIndex") { type = NavType.IntType }),
-        //     enterTransition = { rightToLeftSlideInAnimation() },
-        //     exitTransition = { leftToRightSlideOutAnimation() }
-        // ) { entry ->
-        //     val threadIndex = entry.arguments?.getInt(("threadIndex"))
-        //     if (threadIndex != null) {
-        //         ProfileThreadDetailsScreen(threadNavController, threadIndex, true)
-        //     }
-        // }
-
-        // 3. Reply Thread Screen [Secondary]
-        // composable(
-        //     route = "${MyProfileDestination.REPLY_THREAD.route}/{threadIndex}",
-        //     arguments = listOf(navArgument("threadIndex") { type = NavType.IntType }),
-        //     enterTransition = { bottomToTopSlideInAnimation() },
-        //     exitTransition = { topToBottomSlideOutAnimation() }
-        // ) { entry ->
-        //     val threadIndex = entry.arguments?.getInt("threadIndex")
-        //
-        //     if (threadIndex != null) {
-        //         ProfileReplyThreadScreen(threadNavController, threadIndex, myProfile = true)
-        //     }
-        // }
-
-        // 4. Setting Screen [Secondary]
+        // 2. Setting Screen [Secondary]
         composable(
             route = MyProfileDestination.SETTING.route,
             enterTransition = { rightToLeftSlideInAnimation() },

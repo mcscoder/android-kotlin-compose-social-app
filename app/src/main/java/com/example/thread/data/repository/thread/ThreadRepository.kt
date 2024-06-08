@@ -1,8 +1,10 @@
 package com.example.thread.data.repository.thread
 
+import android.util.Log
 import com.example.thread.data.ApiService
 import com.example.thread.data.RetrofitInstance
 import com.example.thread.data.model.response.ResponseMessage
+import com.example.thread.data.model.thread.MainThreadWithRepliesResponse
 import com.example.thread.data.model.thread.ThreadRequest
 import com.example.thread.data.model.thread.ThreadResponse
 import com.example.thread.data.model.user.UserReplies
@@ -43,6 +45,17 @@ class ThreadRepository(
         return apiService.getReplies(mainId).execute().body()!!
     }
 
+    // 2.6. Get a list of Posts|Comments|Replies by `userId`
+    fun getThreadsByUserId(targetUserId: Int, type: Int): List<ThreadResponse> {
+        return apiService.getThreadsByUserId(targetUserId, type).execute().body()!!
+    }
+
+    // 2.7. Get all Replies by `userId` included Main Thread
+    fun getMainThreadWithReplies(targetUserId: Int): List<MainThreadWithRepliesResponse> {
+        return apiService.getMainThreadWithReplies(targetUserId).execute().body()!!
+    }
+
+    // ---------------------------------------------------------- below is for testing
     // 2. Get Thread replies (remove)
     fun getThreadReplies(mainThreadId: Int, userId: Int): List<ThreadResponse>? {
         return apiService.getReplies(mainThreadId, userId).execute().body()

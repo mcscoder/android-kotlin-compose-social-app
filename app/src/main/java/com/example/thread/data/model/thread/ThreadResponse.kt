@@ -43,3 +43,8 @@ data class ThreadRequest(
     val imageUrls: List<String>,
     val mainId: Int? = null,
 )
+
+data class MainThreadWithRepliesResponse(
+    val main: ThreadResponse,
+    val replies: List<ThreadResponse>
+)

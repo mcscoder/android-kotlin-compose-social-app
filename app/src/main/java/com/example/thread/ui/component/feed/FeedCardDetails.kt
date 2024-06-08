@@ -1,5 +1,7 @@
 package com.example.thread.ui.component.feed
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,47 +26,51 @@ import com.example.thread.ui.navigation.ThreadNavController
 fun FeedCardDetails(
     threadNavController: ThreadNavController,
     onFavoriteClick: (isFavorite: Boolean) -> Unit,
+    onFeedCardClick: () -> Unit = {},
     onReplyClick: () -> Unit,
     thread: ThreadResponse,
     showHorizontalDivider: Boolean = true,
+    clickable: Boolean = false,
 ) {
-    Column(
-        modifier = Modifier.padding(12.dp),
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+    Box(modifier = Modifier.clickable(enabled = clickable) { onFeedCardClick() }) {
+        Column(
+            modifier = Modifier.padding(12.dp)
         ) {
-            // User avatar
-            UserAvatarClickable(
-                avatarURL = thread.user.user.imageUrl,
-                onClick = {
-                    threadNavController.navigateToUserProfile(thread.user.user.userId)
-                }
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            // Username
-            UsernameClickable(
-                username = thread.user.user.username,
-                onClick = { threadNavController.navigateToUserProfile(thread.user.user.userId) })
-            Spacer(modifier = Modifier.width(4.dp))
-            TextDateTime(timeStamp = thread.content.dateTime.createdAt)
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        // Thread content
-        TextBody(text = thread.content.text)
-        // Images Row
-        if (thread.content.imageUrls.isNotEmpty()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                // User avatar
+                UserAvatarClickable(
+                    avatarURL = thread.user.user.imageUrl,
+                    onClick = {
+                        threadNavController.navigateToUserProfile(thread.user.user.userId)
+                    }
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                // Username
+                UsernameClickable(
+                    username = thread.user.user.username,
+                    onClick = { threadNavController.navigateToUserProfile(thread.user.user.userId) })
+                Spacer(modifier = Modifier.width(4.dp))
+                TextDateTime(timeStamp = thread.content.dateTime.createdAt)
+            }
             Spacer(modifier = Modifier.height(8.dp))
-            FeedCardImageRow(imageURLs = thread.content.imageUrls)
+            // Thread content
+            TextBody(text = thread.content.text)
+            // Images Row
+            if (thread.content.imageUrls.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                FeedCardImageRow(imageURLs = thread.content.imageUrls)
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            // Thread action buttons
+            ThreadActionButtons(
+                onFavoriteClick = onFavoriteClick,
+                onReplyClick = onReplyClick,
+                onMoreOptionClick = {},
+                thread = thread
+            )
         }
-        Spacer(modifier = Modifier.height(12.dp))
-        // Thread action buttons
-        ThreadActionButtons(
-            onFavoriteClick = onFavoriteClick,
-            onReplyClick = onReplyClick,
-            onMoreOptionClick = {},
-            thread = thread
-        )
     }
     if (showHorizontalDivider) {
         ThreadHorizontalDivider()

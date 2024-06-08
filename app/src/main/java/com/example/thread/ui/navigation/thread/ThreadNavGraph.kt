@@ -4,13 +4,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.thread.data.model.thread.ThreadType
 import com.example.thread.data.viewmodel.threaddata.ThreadsData
 import com.example.thread.ui.navigation.NavigationType
 import com.example.thread.ui.navigation.ThreadNavController
 import com.example.thread.ui.navigation.getNavRoute
 import com.example.thread.ui.screen.primary.newthread.ReplyToThreadScreen
 import com.example.thread.ui.screen.secondary.threaddetails.ThreadDetailsScreen
+import com.example.thread.ui.screen.secondary.threaddetails.ThreadDetailsViewModel
 
 enum class ThreadDestination(val route: String) {
     DEFAULT("thread"),
@@ -19,7 +19,9 @@ enum class ThreadDestination(val route: String) {
 }
 
 object ThreadDetailsData {
+    // private val threadsDataList: MutableList<ThreadsData?> = mutableListOf()
     private val threadsDataList: MutableList<ThreadsData?> = mutableListOf()
+    private val threadDetailsList: MutableList<ThreadDetailsViewModel?> = mutableListOf()
 
     fun setThreadsData(threadsData: ThreadsData): Int {
         threadsDataList.add(threadsData)
@@ -30,22 +32,32 @@ object ThreadDetailsData {
         return threadsDataList[threadsDataIndex]
     }
 
+    fun setThreadDetails(threadsData: ThreadsData, threadIndex: Int): Int {
+        threadDetailsList.add(ThreadDetailsViewModel(threadsData, threadIndex))
+        return threadDetailsList.size - 1
+    }
+
+    fun getThreadDetails(threadsDetailsIndex: Int): ThreadDetailsViewModel? {
+        return threadDetailsList[threadsDetailsIndex]
+    }
+
     fun removeThreadsDataAt(threadsDataIndex: Int) {
         threadsDataList[threadsDataIndex] = null
+    }
+
+    fun removeThreadDetailsAt(threadDetailsIndex: Int) {
+        threadDetailsList[threadDetailsIndex] = null
     }
 }
 
 fun NavGraphBuilder.threadNavGraph(threadNavController: ThreadNavController) {
     composable(
-        route = "${ThreadDestination.THREAD_DETAILS.route}/{threadsDataIndex}/{threadIndex}",
-        arguments = listOf(
-            navArgument("threadsDataIndex") { type = NavType.IntType },
-            navArgument("threadIndex") { type = NavType.IntType }),
+        route = "${ThreadDestination.THREAD_DETAILS.route}/{threadDetailsIndex}",
+        arguments = listOf(navArgument("threadDetailsIndex") { type = NavType.IntType }),
     ) { entry ->
-        val threadsDataIndex = entry.arguments?.getInt(("threadsDataIndex"))
-        val threadIndex = entry.arguments?.getInt(("threadIndex"))
-        if (threadsDataIndex != null && threadIndex != null) {
-            ThreadDetailsScreen(threadNavController, threadsDataIndex, threadIndex)
+        val threadDetailsIndex = entry.arguments?.getInt(("threadDetailsIndex"))
+        if (threadDetailsIndex != null) {
+            ThreadDetailsScreen(threadNavController, threadDetailsIndex)
         }
     }
     composable(
@@ -55,7 +67,7 @@ fun NavGraphBuilder.threadNavGraph(threadNavController: ThreadNavController) {
             navArgument("threadIndex") { type = NavType.IntType },
             navArgument("threadType") { type = NavType.IntType },
         ),
-    ) {entry ->
+    ) { entry ->
         val threadsDataIndex = entry.arguments?.getInt(("threadsDataIndex"))
         val threadIndex = entry.arguments?.getInt(("threadIndex"))
         val threadType = entry.arguments?.getInt(("threadType"))
