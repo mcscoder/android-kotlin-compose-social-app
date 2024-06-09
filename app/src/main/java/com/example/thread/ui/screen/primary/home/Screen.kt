@@ -1,5 +1,6 @@
 package com.example.thread.ui.screen.primary.home
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -31,7 +32,7 @@ fun HomeScreen(
             viewModel.threadsData.getRandomThreads(true)
         }) { pullRefreshState ->
             InfiniteScrollLayout(
-                modifier = Modifier.pullRefresh(pullRefreshState),
+                modifier = Modifier.pullRefresh(pullRefreshState).fillMaxSize(),
                 onReachedLastVisibleItem = {
                     viewModel.threadsData.getRandomThreads()
                 }

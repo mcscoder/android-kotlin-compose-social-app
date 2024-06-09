@@ -64,23 +64,7 @@ class ProfileViewModel(val targetUserId: Int) : ViewModel() {
     var currentPageIndex by mutableIntStateOf(0)
 
     init {
-        retrieveUserData()
-        retrieveThreadPostsData()
-    }
-
-    fun onFollowUser() {
-        userData.onFollowUser()
-    }
-
-    fun retrieveThreadPostsData() {
-        threadsData.getThreadsByUserId(targetUserId, ThreadType.POST.ordinal)
-    }
-
-    fun retrieveUserData() {
         userData.retrieveUserData()
-    }
-
-    fun retrieveRepliesData() {
-        mainThreadWithReplies.retrieveRepliesData()
+        threadsData.getThreadsByUserId(targetUserId, ThreadType.POST.ordinal)
     }
 }

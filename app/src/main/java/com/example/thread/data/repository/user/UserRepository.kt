@@ -1,5 +1,6 @@
 package com.example.thread.data.repository.user
 
+import android.util.Log
 import com.example.thread.data.ApiService
 import com.example.thread.data.RetrofitInstance
 import com.example.thread.data.model.activity.FollowActivity
@@ -24,23 +25,9 @@ class UserRepository(
         return apiService.userLoginAuthentication(requestBody).execute().body()
     }
 
-    // 3. Follow another User
-    fun followUser(
-        targetUserId: Int,
-        onResponse: () -> Unit = {},
-    ) {
-        val call = apiService.followUser(targetUserId)
-        call.enqueue(object : Callback<ResponseMessage> {
-            override fun onResponse(
-                call: Call<ResponseMessage>,
-                response: Response<ResponseMessage>,
-            ) {
-                onResponse()
-            }
-
-            override fun onFailure(call: Call<ResponseMessage>, t: Throwable) {
-            }
-        })
+    // 1.3. Follow or unfollow a User
+    suspend fun followUser(targetUserId: Int) {
+        apiService.followUser(targetUserId)
     }
 
     // 4. Get followers of specific user

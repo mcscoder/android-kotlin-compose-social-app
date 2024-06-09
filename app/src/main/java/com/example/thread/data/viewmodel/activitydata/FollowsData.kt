@@ -16,7 +16,6 @@ class FollowsData {
     val data: StateFlow<List<FollowActivity>> = _data.asStateFlow()
 
     private val userRepository = UserRepository()
-    private val currentUserId = GlobalViewModelProvider.getCurrentUserId()
 
     fun retrieveFollowersData(targetUserId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -36,9 +35,7 @@ class FollowsData {
         }
     }
 
-    fun onFollowUser(targetUserId: Int, onResponse: (currentUserId: Int) -> Unit = {}) {
-        userRepository.followUser(targetUserId) {
-            onResponse(currentUserId)
-        }
+    suspend fun onFollowUser(targetUserId: Int) {
+        userRepository.followUser(targetUserId)
     }
 }

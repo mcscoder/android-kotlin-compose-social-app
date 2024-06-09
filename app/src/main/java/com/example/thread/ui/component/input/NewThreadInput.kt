@@ -73,7 +73,7 @@ fun NewThreadInput(
         }
         Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
             UsernameClickable(
-                username = user.firstName,
+                username = user.username,
                 onClick = { /*TODO*/ })
             BorderlessTextField(
                 modifier = Modifier.fillMaxWidth(),

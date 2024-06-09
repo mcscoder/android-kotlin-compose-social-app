@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 class UserData(private val userId: Int) {
     private val _data = MutableStateFlow<UserResponse?>(null)
     val data: StateFlow<UserResponse?> = _data.asStateFlow()
-    private val currentUserId = GlobalViewModelProvider.getCurrentUserId()
 
     private val userRepository = UserRepository()
 
@@ -25,7 +24,10 @@ class UserData(private val userId: Int) {
         }
     }
 
-    fun onFollowUser(onResponse: () -> Unit = { retrieveUserData() }) {
-        // userRepository.followUser(data.value!!.id, onResponse)
+    fun onFollowUser() {
+        CoroutineScope(Dispatchers.IO).launch {
+            userRepository.followUser(userId)
+            retrieveUserData()
+        }
     }
 }

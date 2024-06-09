@@ -10,8 +10,10 @@ import com.example.thread.data.model.user.UserLoginRequest
 import com.example.thread.data.model.user.UserReplies
 import com.example.thread.data.model.user.UserResponse
 import com.example.thread.ui.screen.GlobalViewModelProvider
+import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -37,6 +39,13 @@ interface ApiService {
     // 1.2. User login authentication
     @POST("user/authentication/login")
     fun userLoginAuthentication(@Body requestBody: UserLoginRequest): Call<Int>
+
+    // 1.3. Follow or unfollow a User
+    @GET("user/follow")
+    suspend fun followUser(
+        @Header("targetUserId") targetUserId: Int,
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Response<Unit>
 
     // 2.1. Get Thread by `threadId`
     @GET("thread/{threadId}")
@@ -154,11 +163,11 @@ interface ApiService {
 
     // ----- follows
     // temp
-    @GET("follow")
-    fun followUser(
-        @Header("targetUserId") targetUserId: Int,
-        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
-    ): Call<ResponseMessage>
+    // @GET("follow")
+    // fun followUser(
+    //     @Header("targetUserId") targetUserId: Int,
+    //     @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    // ): Call<ResponseMessage>
 
     @GET("followers")
     // temp

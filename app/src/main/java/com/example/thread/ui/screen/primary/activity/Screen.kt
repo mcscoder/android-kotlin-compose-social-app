@@ -18,6 +18,7 @@ import com.example.thread.ui.component.text.TextHeadLine
 import com.example.thread.ui.navigation.ThreadNavController
 import com.example.thread.ui.navigation.thread.ThreadDestination
 import com.example.thread.ui.navigation.thread.ThreadDetailsData
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -94,8 +95,9 @@ fun ActivityScreen(threadNavController: ThreadNavController, modifier: Modifier 
                                 threadNavController.navigateToUserProfile(followActivity.user.userId)
                             },
                             onActionClick = {
-                                viewModel.follows.onFollowUser(followActivity.user.userId) { currentUserId ->
-                                    viewModel.follows.retrieveFollowersData(currentUserId)
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    viewModel.follows.onFollowUser(followActivity.user.userId)
+                                    // viewModel.follows.retrieveFollowersData(currentUserId)
                                 }
                             }
                         )
