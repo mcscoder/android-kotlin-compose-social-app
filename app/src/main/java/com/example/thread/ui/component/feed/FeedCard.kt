@@ -28,6 +28,7 @@ import com.example.thread.ui.component.text.TextDateTime
 import com.example.thread.ui.component.user.UserAvatarClickable
 import com.example.thread.ui.component.user.UsernameClickable
 import com.example.thread.ui.navigation.ThreadNavController
+import com.example.thread.ui.screen.GlobalViewModelProvider
 import com.example.thread.ui.theme.ThreadTheme
 
 @Composable
@@ -57,7 +58,8 @@ fun FeedCard(
                 ) {
                     UserAvatarClickable(
                         avatarURL = threadData.user.user.imageUrl,
-                        isFollowed = threadData.user.overview.follow.isFollowing,
+                        isFollowed = threadData.user.overview.follow.isFollowing ||
+                                threadData.user.user.userId == GlobalViewModelProvider.getCurrentUserId(),
                         onClick = { threadNavController.navigateToUserProfile(threadData.user.user.userId) }
                     )
                     if (showVerticalDivider) {

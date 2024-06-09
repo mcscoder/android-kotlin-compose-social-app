@@ -21,6 +21,7 @@ import com.example.thread.ui.component.text.TextDateTime
 import com.example.thread.ui.component.user.UserAvatarClickable
 import com.example.thread.ui.component.user.UsernameClickable
 import com.example.thread.ui.navigation.ThreadNavController
+import com.example.thread.ui.screen.GlobalViewModelProvider
 
 @Composable
 fun FeedCardDetails(
@@ -44,7 +45,9 @@ fun FeedCardDetails(
                     avatarURL = thread.user.user.imageUrl,
                     onClick = {
                         threadNavController.navigateToUserProfile(thread.user.user.userId)
-                    }
+                    },
+                    isFollowed = thread.user.overview.follow.isFollowing ||
+                            thread.user.user.userId == GlobalViewModelProvider.getCurrentUserId()
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 // Username
