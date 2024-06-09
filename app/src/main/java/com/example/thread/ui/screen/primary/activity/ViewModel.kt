@@ -35,6 +35,6 @@ class ActivityViewModel : ViewModel() {
     val follows = FollowsData()
 
     fun retrieveFollowersData(targetUserId: Int = GlobalViewModelProvider.getCurrentUserId()) {
-        follows.retrieveFollowersData(targetUserId)
+        follows.retrieveUserFollowers(targetUserId)
     }
 }

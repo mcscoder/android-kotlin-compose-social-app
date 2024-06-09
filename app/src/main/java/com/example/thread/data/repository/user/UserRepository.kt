@@ -1,16 +1,11 @@
 package com.example.thread.data.repository.user
 
-import android.util.Log
 import com.example.thread.data.ApiService
 import com.example.thread.data.RetrofitInstance
 import com.example.thread.data.model.activity.FollowActivity
-import com.example.thread.data.model.response.ResponseMessage
+import com.example.thread.data.model.user.ActivityFollowResponse
 import com.example.thread.data.model.user.UserLoginRequest
-import com.example.thread.data.model.user.LoginResponse
 import com.example.thread.data.model.user.UserResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class UserRepository(
     private val apiService: ApiService = RetrofitInstance.apiService,
@@ -30,13 +25,13 @@ class UserRepository(
         apiService.followUser(targetUserId)
     }
 
-    // 4. Get followers of specific user
-    fun getFollowers(targetUserId: Int): List<FollowActivity>? {
-        return apiService.getFollowers(targetUserId).execute().body()
+    // 1.4. Get a list of user those who follow `target user`
+    suspend fun getUserFollowers(targetUserId: Int): List<ActivityFollowResponse> {
+        return apiService.getUserFollowers(targetUserId).body()!!
     }
 
-    // 5. Get followings of specific user
-    fun getFollowings(targetUserId: Int): List<FollowActivity>? {
-        return apiService.getFollowings(targetUserId).execute().body()
+    // 1.5. Get a list of user those who followed by `target user`
+    suspend fun getUserFollowings(targetUserId: Int): List<ActivityFollowResponse> {
+        return apiService.getUserFollowings(targetUserId).body()!!
     }
 }

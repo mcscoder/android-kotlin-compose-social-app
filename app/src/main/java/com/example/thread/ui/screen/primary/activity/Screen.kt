@@ -9,18 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.thread.data.model.activity.ReplyType
-import com.example.thread.data.viewmodel.threaddata.MainThreads
-import com.example.thread.data.viewmodel.threaddata.ThreadsData
-import com.example.thread.ui.component.activityitem.FollowActivityItem
+import com.example.thread.ui.component.activityitem.ActivityFollowItem
 import com.example.thread.ui.component.activityitem.ReplyActivityItem
 import com.example.thread.ui.component.layout.TabRowLayout
 import com.example.thread.ui.component.text.TextHeadLine
 import com.example.thread.ui.navigation.ThreadNavController
-import com.example.thread.ui.navigation.thread.ThreadDestination
-import com.example.thread.ui.navigation.thread.ThreadDetailsData
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @Composable
 fun ActivityScreen(threadNavController: ThreadNavController, modifier: Modifier = Modifier) {
@@ -89,14 +82,13 @@ fun ActivityScreen(threadNavController: ThreadNavController, modifier: Modifier 
                     viewModel.retrieveFollowersData()
                 } else {
                     itemsIndexed(follows) { index, followActivity ->
-                        FollowActivityItem(
-                            followActivity = followActivity,
+                        ActivityFollowItem(
+                            activityFollow = followActivity,
                             onClick = {
-                                threadNavController.navigateToUserProfile(followActivity.user.userId)
+                                threadNavController.navigateToUserProfile(followActivity.user.user.userId)
                             },
                             onActionClick = {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    viewModel.follows.onFollowUser(followActivity.user.userId)
+                                viewModel.follows.onFollowUser(followActivity.user.user.userId) {
                                     // viewModel.follows.retrieveFollowersData(currentUserId)
                                 }
                             }

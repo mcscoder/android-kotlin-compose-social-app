@@ -6,6 +6,7 @@ import com.example.thread.data.model.response.ResponseMessage
 import com.example.thread.data.model.thread.MainThreadWithRepliesResponse
 import com.example.thread.data.model.thread.ThreadResponse
 import com.example.thread.data.model.thread.ThreadRequest
+import com.example.thread.data.model.user.ActivityFollowResponse
 import com.example.thread.data.model.user.UserLoginRequest
 import com.example.thread.data.model.user.UserReplies
 import com.example.thread.data.model.user.UserResponse
@@ -46,6 +47,20 @@ interface ApiService {
         @Header("targetUserId") targetUserId: Int,
         @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Response<Unit>
+
+    // 1.4. Get a list of user those who follow `target user`
+    @GET("user/followers")
+    suspend fun getUserFollowers(
+        @Header("targetUserId") targetUserId: Int,
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Response<List<ActivityFollowResponse>>
+
+    // 1.5. Get a list of user those who followed by `target user`
+    @GET("user/followings")
+    suspend fun getUserFollowings(
+        @Header("targetUserId") targetUserId: Int,
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Response<List<ActivityFollowResponse>>
 
     // 2.1. Get Thread by `threadId`
     @GET("thread/{threadId}")

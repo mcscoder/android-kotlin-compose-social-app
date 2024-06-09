@@ -1,5 +1,6 @@
 package com.example.thread.data.model.user
 
+import com.example.thread.data.model.common.DateTime
 import com.example.thread.data.model.thread.ThreadResponse
 import com.google.gson.annotations.SerializedName
 
@@ -23,6 +24,11 @@ data class UserOverview(
 data class UserResponse(
     val user: User,
     val overview: UserOverview
+)
+
+data class ActivityFollowResponse(
+    val user: UserResponse,
+    val dateTime: DateTime
 )
 
 data class UserReplies(

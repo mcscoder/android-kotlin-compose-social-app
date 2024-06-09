@@ -27,8 +27,11 @@ fun ActivityItem(
     action: @Composable() (() -> Unit?)? = null,
     onClick: () -> Unit = {},
     timeStamp: Long,
+    showTimeStamp: Boolean = true,
 ) {
-    Box(modifier = modifier.padding(top = 4.dp).clickable { onClick() }) {
+    Box(modifier = modifier
+        .padding(top = 4.dp)
+        .clickable { onClick() }) {
         Row(modifier = Modifier.padding(top = 12.dp, start = 16.dp)) {
             UserAvatar(avatarURL = avatarURL)
             Row {
@@ -39,7 +42,9 @@ fun ActivityItem(
                             Row {
                                 TextBody(text = title, bold = true)
                                 Spacer(width = 4.dp)
-                                TextDateTime(timeStamp)
+                                if (showTimeStamp) {
+                                    TextDateTime(timeStamp)
+                                }
                             }
                             Spacer(height = 2.dp)
                             description()
