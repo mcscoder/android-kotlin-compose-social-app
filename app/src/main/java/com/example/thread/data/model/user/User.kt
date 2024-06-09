@@ -9,13 +9,20 @@ data class User(
     val firstName: String = "",
     val lastName: String = "",
     val imageUrl: String = "",
-    // val following: Boolean = false,
-    // val followers: Int = 0,
+)
+
+data class FollowOverview (
+    val isFollowing: Boolean,
+    val count: Int,
+)
+
+data class UserOverview(
+    val follow: FollowOverview,
 )
 
 data class UserResponse(
     val user: User,
-    val isFollowing: Boolean,
+    val overview: UserOverview
 )
 
 data class UserReplies(

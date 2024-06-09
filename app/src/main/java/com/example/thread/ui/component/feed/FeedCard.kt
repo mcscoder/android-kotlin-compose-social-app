@@ -57,7 +57,7 @@ fun FeedCard(
                 ) {
                     UserAvatarClickable(
                         avatarURL = threadData.user.user.imageUrl,
-                        isFollowed = threadData.user.isFollowing,
+                        isFollowed = threadData.user.overview.follow.isFollowing,
                         onClick = { threadNavController.navigateToUserProfile(threadData.user.user.userId) }
                     )
                     if (showVerticalDivider) {

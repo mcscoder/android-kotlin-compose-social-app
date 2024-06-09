@@ -65,8 +65,7 @@ fun ProfileHeader(
         }
         Spacer(modifier = Modifier.height(16.dp))
         TextBody(
-            // text = "${user.followers} followers", // ViewModel data
-            text = "${0} followers", // ViewModel data
+            text = "${user.overview.follow.count} followers", // ViewModel data
             color = Color.Gray,
             modifier = Modifier.clickable {
                 threadNavController.navigate(
@@ -99,11 +98,11 @@ fun ProfileHeader(
                     },
                     rounded = false,
                     modifier = Modifier.weight(1f),
-                    buttonVariant = if (user.isFollowing) ButtonVariant.OUTLINED else ButtonVariant.FILLED
+                    buttonVariant = if (user.overview.follow.isFollowing) ButtonVariant.OUTLINED else ButtonVariant.FILLED
                 ) {
                     TextBody(
-                        text = if (user.isFollowing) "Following" else "Follow",
-                        color = if (user.isFollowing) Color.Black else Color.White,
+                        text = if (user.overview.follow.isFollowing) "Following" else "Follow",
+                        color = if (user.overview.follow.isFollowing) Color.Black else Color.White,
                         bold = true
                     )
                 }
