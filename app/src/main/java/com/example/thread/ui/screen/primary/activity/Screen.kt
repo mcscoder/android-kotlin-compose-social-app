@@ -9,11 +9,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.thread.data.model.activity.ReplyType
+import com.example.thread.data.viewmodel.threaddata.ThreadsData
 import com.example.thread.ui.component.activityitem.ActivityFollowItem
-import com.example.thread.ui.component.activityitem.ReplyActivityItem
+import com.example.thread.ui.component.activityitem.ActivityReplyItem
 import com.example.thread.ui.component.layout.TabRowLayout
 import com.example.thread.ui.component.text.TextHeadLine
 import com.example.thread.ui.navigation.ThreadNavController
+import com.example.thread.ui.screen.GlobalViewModelProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun ActivityScreen(threadNavController: ThreadNavController, modifier: Modifier = Modifier) {
@@ -37,7 +42,7 @@ fun ActivityScreen(threadNavController: ThreadNavController, modifier: Modifier 
         onRefresh = { currentPage ->
             when (currentPage) {
                 ActivityScreenIndex.REPLIES.ordinal -> {
-                    viewModel.replies.retrieveReplyActivities()
+                    viewModel.replies.getActivityReplies()
                 }
 
                 ActivityScreenIndex.FOLLOWS.ordinal -> {
@@ -50,26 +55,15 @@ fun ActivityScreen(threadNavController: ThreadNavController, modifier: Modifier 
         when (currentPage) {
             ActivityScreenIndex.REPLIES.ordinal -> {
                 if (replies.isEmpty()) {
-                    viewModel.replies.retrieveReplyActivities()
+                    viewModel.replies.getActivityReplies()
                 } else {
                     itemsIndexed(replies) { index, reply ->
-                        ReplyActivityItem(threadData = reply.reply, onClick = {
-                            when (reply.type) {
-                                ReplyType.REPLY.ordinal -> {
-                                    // Navigate to main Thread details
-                                    // val threadsData = ThreadsData()
-                                    // threadsData.retrieveThreadById(
-                                    //     reply.reply.content.mainThreadId!!
-                                    // ) {
-                                    //     launch(Dispatchers.Main) {
-                                    //         ThreadDetailsData.setThreadsData(threadsData, 0)
-                                    //         threadNavController.navigate(ThreadDestination.THREAD_DETAILS.route)
-                                    //     }
-                                    // }
-                                }
-
-                                ReplyType.REPLYING_REPLY.ordinal -> {
-                                    // Handle later
+                        ActivityReplyItem(threadData = reply, onClick = {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val threadsData = ThreadsData()
+                                threadsData.getThreadById(reply.content.mainId!!)
+                                launch(Dispatchers.Main) {
+                                    threadNavController.navigateToThreadDetails(threadsData, 0)
                                 }
                             }
                         })
@@ -89,7 +83,7 @@ fun ActivityScreen(threadNavController: ThreadNavController, modifier: Modifier 
                             },
                             onActionClick = {
                                 viewModel.follows.onFollowUser(followActivity.user.user.userId) {
-                                    // viewModel.follows.retrieveFollowersData(currentUserId)
+                                    viewModel.follows.retrieveUserFollowers(GlobalViewModelProvider.getCurrentUserId())
                                 }
                             }
                         )

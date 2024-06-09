@@ -16,8 +16,8 @@ class ThreadRepository(
     private val resourceRepository: ResourceRepository = ResourceRepository(),
 ) {
     // 2.1. Get Thread by `threadId`
-    fun getThread(threadId: Int, currentUserId: Int): ThreadResponse? {
-        return apiService.getThread(threadId, currentUserId).execute().body()
+    suspend fun getThread(threadId: Int): ThreadResponse? {
+        return apiService.getThread(threadId).body()
     }
 
     // 2.2. Get a random list of Thread posts
@@ -53,6 +53,11 @@ class ThreadRepository(
     // 2.7. Get all Replies by `userId` included Main Thread
     fun getMainThreadWithReplies(targetUserId: Int): List<MainThreadWithRepliesResponse> {
         return apiService.getMainThreadWithReplies(targetUserId).execute().body()!!
+    }
+
+    // 2.8. Get all comments that comments to current user's post
+    suspend fun getActivityReplies(): List<ThreadResponse> {
+        return apiService.getActivityReplies().body()!!
     }
 
     // ---------------------------------------------------------- below is for testing

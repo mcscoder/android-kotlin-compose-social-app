@@ -64,10 +64,10 @@ interface ApiService {
 
     // 2.1. Get Thread by `threadId`
     @GET("thread/{threadId}")
-    fun getThread(
+    suspend fun getThread(
         @Path("threadId") threadId: Int,
         @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
-    ): Call<ThreadResponse>
+    ): Response<ThreadResponse>
 
     // 2.2. Get a random list of Thread posts
     @GET("threads/random")
@@ -111,6 +111,12 @@ interface ApiService {
         @Header("targetUserId") targetUserId: Int,
         @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Call<List<MainThreadWithRepliesResponse>>
+
+    // 2.8. Get all comments that comments to current user's post
+    @GET("threads/activity/replies")
+    suspend fun getActivityReplies(
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Response<List<ThreadResponse>>
 
     // temp
     @GET("thread/replying/reply/{threadReplyId}")

@@ -9,6 +9,7 @@ data class Thread(
     val imageUrls: List<String>,
     val type: Int,
     val dateTime: DateTime,
+    val mainId: Int?
 )
 
 data class FavoriteOverviewResponse(

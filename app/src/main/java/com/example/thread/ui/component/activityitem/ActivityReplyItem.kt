@@ -1,6 +1,5 @@
 package com.example.thread.ui.component.activityitem
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -8,7 +7,7 @@ import com.example.thread.data.model.thread.ThreadResponse
 import com.example.thread.ui.component.feed.FeedCardContent
 
 @Composable
-fun ReplyActivityItem(
+fun ActivityReplyItem(
     modifier: Modifier = Modifier,
     threadData: ThreadResponse,
     onClick: () -> Unit = {},

@@ -77,4 +77,18 @@ class ThreadsData(threadResponses: List<ThreadResponse> = emptyList()) {
             _data.update { threads }
         }
     }
+
+    fun getActivityReplies() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val replies = threadRepository.getActivityReplies()
+            _data.update { replies }
+        }
+    }
+
+    suspend fun getThreadById(threadId: Int) {
+        val thread = threadRepository.getThread(threadId)
+        if (thread != null) {
+            _data.update { listOf(thread) }
+        }
+    }
 }
