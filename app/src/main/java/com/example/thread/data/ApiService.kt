@@ -8,6 +8,7 @@ import com.example.thread.data.model.thread.ThreadResponse
 import com.example.thread.data.model.thread.ThreadRequest
 import com.example.thread.data.model.user.ActivityFollowResponse
 import com.example.thread.data.model.user.UserLoginRequest
+import com.example.thread.data.model.user.UserRegisterRequest
 import com.example.thread.data.model.user.UserReplies
 import com.example.thread.data.model.user.UserResponse
 import com.example.thread.ui.screen.GlobalViewModelProvider
@@ -16,6 +17,7 @@ import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -61,6 +63,12 @@ interface ApiService {
         @Header("targetUserId") targetUserId: Int,
         @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Response<List<ActivityFollowResponse>>
+
+    // 1.6. Create new account
+    @POST("user/register")
+    suspend fun userRegister(
+        @Body requestBody: UserRegisterRequest,
+    ): Response<Int>
 
     // 2.1. Get Thread by `threadId`
     @GET("thread/{threadId}")
@@ -117,6 +125,20 @@ interface ApiService {
     suspend fun getActivityReplies(
         @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Response<List<ThreadResponse>>
+
+    // 2.9. Search Posts by text
+    @GET("threads/search/{text}")
+    suspend fun getThreadsByText(
+        @Path("text") text: String,
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Response<List<ThreadResponse>>
+
+    // 2.10. Delete a Thread
+    @DELETE("thread/delete/{threadId}")
+    suspend fun deleteThreadById(
+        @Path("threadId") threadId: Int,
+        // @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Response<Unit>
 
     // temp
     @GET("thread/replying/reply/{threadReplyId}")

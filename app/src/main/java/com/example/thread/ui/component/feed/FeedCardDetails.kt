@@ -70,7 +70,7 @@ fun FeedCardDetails(
             ThreadActionButtons(
                 onFavoriteClick = onFavoriteClick,
                 onReplyClick = onReplyClick,
-                onMoreOptionClick = {},
+                onDeleteConfirmed = {},
                 thread = thread
             )
         }

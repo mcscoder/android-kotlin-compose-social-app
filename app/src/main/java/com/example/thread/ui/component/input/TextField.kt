@@ -1,5 +1,6 @@
 package com.example.thread.ui.component.input
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -8,12 +9,22 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.nativeKeyCode
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -39,17 +50,25 @@ fun TextField(
         textDecoration = TextDecoration.None,
         lineHeight = 21.sp,
     ),
-    padding: Dp = 16.dp,
+    padding: PaddingValues = PaddingValues(16.dp),
     backgroundColor: Color = Color(245, 245, 245),
     borderColor: Color = Color.LightGray,
     shape: Shape = RoundedCornerShape(12.dp),
+    startIcon: @Composable () -> Unit = {},
+    endIcon: @Composable () -> Unit = {},
     singleLine: Boolean = true,
+    password: Boolean = false,
+    onEnter: () -> Unit = {},
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     Row(
         modifier = modifier
-            .background(backgroundColor)
-            .border(1.dp, borderColor, shape)
+            .background(backgroundColor, shape)
+            .border(1.dp, borderColor, shape),
+        verticalAlignment = Alignment.CenterVertically
     ) {
+        startIcon()
         BorderlessTextField(
             modifier = Modifier
                 .weight(1f)
@@ -58,8 +77,14 @@ fun TextField(
             onValueChange = onValueChange,
             placeHolder = placeHolder,
             textStyle = textStyle,
-            singleLine = singleLine
+            singleLine = singleLine,
+            password = password,
+            keyboardActions = KeyboardActions(onDone = {
+                keyboardController?.hide()
+                onEnter()
+            }),
         )
+        endIcon()
     }
 }
 

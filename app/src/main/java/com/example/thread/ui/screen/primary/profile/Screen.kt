@@ -164,7 +164,10 @@ fun ProfileScreen(
                     viewModel.userData.retrieveUserData()
                     when (currentPage) {
                         0 -> {
-                            viewModel.threadsData.getThreadsByUserId(targetUserId, ThreadType.POST.ordinal)
+                            viewModel.threadsData.getThreadsByUserId(
+                                targetUserId,
+                                ThreadType.POST.ordinal
+                            )
                         }
 
                         1 -> {
@@ -196,6 +199,12 @@ fun ProfileScreen(
                                     threadNavController.navigateToReplyToThread(
                                         viewModel.threadsData,
                                         index
+                                    )
+                                },
+                                onDeleteConfirmed = {
+                                    viewModel.threadsData.getThreadsByUserId(
+                                        targetUserId,
+                                        ThreadType.POST.ordinal
                                     )
                                 }
                             )

@@ -3,7 +3,6 @@ package com.example.thread.data.viewmodel.threaddata
 import com.example.thread.data.model.thread.FavoriteOverviewResponse
 import com.example.thread.data.model.thread.ThreadResponse
 import com.example.thread.data.repository.thread.ThreadRepository
-import com.example.thread.ui.screen.GlobalViewModelProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -89,6 +88,13 @@ class ThreadsData(threadResponses: List<ThreadResponse> = emptyList()) {
         val thread = threadRepository.getThread(threadId)
         if (thread != null) {
             _data.update { listOf(thread) }
+        }
+    }
+
+    fun getThreadsByText(text: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val threads = threadRepository.getThreadsByText(text)
+            _data.update { threads }
         }
     }
 }

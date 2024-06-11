@@ -50,7 +50,7 @@ fun NewThreadScreen(
             )
         },
         bottomBar = {
-            TextBody(text = "Are you sure bro?")
+            // TextBody(text = "Are you sure bro?")
         }
     ) { paddingValues ->
         LazyColumn(modifier = Modifier.padding(paddingValues)) {

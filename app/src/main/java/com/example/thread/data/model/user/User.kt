@@ -12,7 +12,7 @@ data class User(
     val imageUrl: String = "",
 )
 
-data class FollowOverview (
+data class FollowOverview(
     val isFollowing: Boolean,
     val count: Int,
 )
@@ -23,12 +23,12 @@ data class UserOverview(
 
 data class UserResponse(
     val user: User,
-    val overview: UserOverview
+    val overview: UserOverview,
 )
 
 data class ActivityFollowResponse(
     val user: UserResponse,
-    val dateTime: DateTime
+    val dateTime: DateTime,
 )
 
 data class UserReplies(
@@ -44,7 +44,9 @@ data class UserLoginRequest(
     val password: String,
 )
 
-data class LoginResponse(
-    val user: User? = null,
-    val message: String? = null,
+data class UserRegisterRequest(
+    val username: String,
+    val firstName: String,
+    val lastName: String,
+    val password: String,
 )

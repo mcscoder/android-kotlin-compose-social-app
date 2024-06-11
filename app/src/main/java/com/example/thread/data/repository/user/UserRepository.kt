@@ -5,6 +5,7 @@ import com.example.thread.data.RetrofitInstance
 import com.example.thread.data.model.activity.FollowActivity
 import com.example.thread.data.model.user.ActivityFollowResponse
 import com.example.thread.data.model.user.UserLoginRequest
+import com.example.thread.data.model.user.UserRegisterRequest
 import com.example.thread.data.model.user.UserResponse
 
 class UserRepository(
@@ -33,5 +34,10 @@ class UserRepository(
     // 1.5. Get a list of user those who followed by `target user`
     suspend fun getUserFollowings(targetUserId: Int): List<ActivityFollowResponse> {
         return apiService.getUserFollowings(targetUserId).body()!!
+    }
+
+    // 1.6. Create new account
+    suspend fun userRegister(requestBody: UserRegisterRequest): Int {
+        return apiService.userRegister(requestBody).body()!!
     }
 }

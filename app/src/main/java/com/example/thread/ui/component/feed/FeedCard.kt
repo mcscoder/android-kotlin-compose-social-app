@@ -13,12 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
-import com.example.thread.data.model.common.DateTime
 import com.example.thread.data.model.thread.ThreadResponse
-import com.example.thread.data.model.user.User
+import com.example.thread.data.repository.thread.ThreadRepository
 import com.example.thread.ui.component.button.ThreadActionButtons
 import com.example.thread.ui.component.common.ThreadHorizontalDivider
 import com.example.thread.ui.component.common.ThreadVerticalDivider
@@ -29,7 +26,10 @@ import com.example.thread.ui.component.user.UserAvatarClickable
 import com.example.thread.ui.component.user.UsernameClickable
 import com.example.thread.ui.navigation.ThreadNavController
 import com.example.thread.ui.screen.GlobalViewModelProvider
-import com.example.thread.ui.theme.ThreadTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.Dispatcher
 
 @Composable
 fun FeedCard(
@@ -38,6 +38,7 @@ fun FeedCard(
     onFeedCardClick: () -> Unit = {},
     onFavoriteClick: (isFavorite: Boolean) -> Unit = {},
     onReplyClick: () -> Unit = {},
+    onDeleteConfirmed: () -> Unit = {},
     ableToReply: Boolean = true,
     showActionButton: Boolean = true,
     showVerticalDivider: Boolean = false,
@@ -85,9 +86,14 @@ fun FeedCard(
                         ThreadActionButtons(
                             onFavoriteClick = onFavoriteClick,
                             onReplyClick = onReplyClick,
-                            onMoreOptionClick = {},
                             thread = threadData,
-                            ableToReply = ableToReply
+                            ableToReply = ableToReply,
+                            onDeleteConfirmed = {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    ThreadRepository().deleteThreadById(threadData.content.threadId)
+                                    onDeleteConfirmed()
+                                }
+                            }
                         )
                     }
                     if (threadData.overview.reply.count > 0 && showActionButton) {

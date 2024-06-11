@@ -60,6 +60,16 @@ class ThreadRepository(
         return apiService.getActivityReplies().body()!!
     }
 
+    // 2.9. Search Posts by text
+    suspend fun getThreadsByText(text: String): List<ThreadResponse> {
+        return apiService.getThreadsByText(text).body()!!
+    }
+
+    // 2.10. Delete a Thread by id
+    suspend fun deleteThreadById(threadId: Int) {
+        apiService.deleteThreadById(threadId)
+    }
+
     // ---------------------------------------------------------- below is for testing
     // 2. Get Thread replies (remove)
     fun getThreadReplies(mainThreadId: Int, userId: Int): List<ThreadResponse>? {

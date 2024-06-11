@@ -7,7 +7,7 @@ object RetrofitInstance {
     // private val BASE_URL = "http://192.168.2.241:3000/api/"
     // private val BASE_URL = "http://10.42.0.1:3000/api/"
     private const val BASE_URL = "http://192.168.1.18:3000/api/"
-    // private const val BASE_URL = "http://192.168.85.241:3000/api/"
+    // private const val BASE_URL = "http://172.20.10.2:3000/api/"
 
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
