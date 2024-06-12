@@ -7,6 +7,7 @@ import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,6 +44,7 @@ fun BorderlessTextField(
     singleLine: Boolean = false,
     keyboardActions: KeyboardActions = KeyboardActions(),
     password: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val coroutineScope = rememberCoroutineScope()
@@ -65,6 +67,7 @@ fun BorderlessTextField(
             innerTextField()
         },
         singleLine = singleLine,
+        keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         visualTransformation = if (password) PasswordVisualTransformation() else VisualTransformation.None
     )

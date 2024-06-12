@@ -3,9 +3,16 @@ package com.example.thread.ui
 import android.util.Log
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.systemBarsIgnoringVisibility
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,6 +33,8 @@ import com.example.thread.ui.navigation.ThreadNavigationItem
 import com.example.thread.ui.navigation.activity.activityNavGraph
 import com.example.thread.ui.navigation.followerlist.followerListNavGraph
 import com.example.thread.ui.navigation.home.homeNavGraph
+import com.example.thread.ui.navigation.login.LoginDestination
+import com.example.thread.ui.navigation.login.loginNavGraph
 import com.example.thread.ui.navigation.myprofile.myProfileNavGraph
 import com.example.thread.ui.navigation.newthread.newThreadNavGraph
 import com.example.thread.ui.navigation.profile.profileNavGraph
@@ -38,37 +47,29 @@ import com.example.thread.ui.theme.ThreadTheme
 
 @Composable
 fun MainApplication() {
-    ThreadTheme(darkTheme = false) {
-        Surface(
+    val threadNavController = ThreadNavController(rememberNavController())
+    ThreadScaffold(
+        bottomBar = {
+            ThreadBottomNavigation(threadNavController = threadNavController)
+        }
+    ) { paddingValues ->
+        NavHost(
             modifier = Modifier
-                .fillMaxSize()
-                .imePadding()
+                .padding(paddingValues)
+                .fillMaxSize(),
+            navController = threadNavController.navController,
+            startDestination = ThreadNavigationItem.HOME.route,
+            enterTransition = { fadeIn() },
+            exitTransition = { fadeOut() }
         ) {
-            val threadNavController = ThreadNavController(rememberNavController())
-            ThreadScaffold(
-                bottomBar = {
-                    ThreadBottomNavigation(threadNavController = threadNavController)
-                }
-            ) { paddingValues ->
-                NavHost(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize(),
-                    navController = threadNavController.navController,
-                    startDestination = ThreadNavigationItem.HOME.route,
-                    enterTransition = { fadeIn() },
-                    exitTransition = { fadeOut() }
-                ) {
-                    homeNavGraph(threadNavController)
-                    searchNavGraph(threadNavController)
-                    activityNavGraph(threadNavController)
-                    myProfileNavGraph(threadNavController)
-                    newThreadNavGraph(threadNavController)
-                    profileNavGraph(threadNavController)
-                    threadNavGraph(threadNavController)
-                    followerListNavGraph(threadNavController)
-                }
-            }
+            homeNavGraph(threadNavController)
+            searchNavGraph(threadNavController)
+            activityNavGraph(threadNavController)
+            myProfileNavGraph(threadNavController)
+            newThreadNavGraph(threadNavController)
+            profileNavGraph(threadNavController)
+            threadNavGraph(threadNavController)
+            followerListNavGraph(threadNavController)
         }
     }
 }
@@ -77,21 +78,38 @@ fun MainApplication() {
 fun ThreadApp() {
     val userPreferences = UserPreferences(LocalContext.current)
     val userId = userPreferences.userId.collectAsState(initial = 0).value
-
-    if (userId == 0) {
-        // Screen loading at initial value
-        LoadingScreen()
-    } else if (userId == null) {
-        // After update if userId still null
-        LoginScreen(onLoginSuccess = { userPreferences.setUser(it) })
-    } else {
-        // Login authentication success
-        val globalViewModel = GlobalViewModelProvider.init(userId)
-        val user = globalViewModel.user.collectAsState().value
-        if (user.userId != 0) {
-            // Every data about user has been fetched in GlobalViewModel
-            // App now is ready to use
-            MainApplication()
+    ThreadTheme(darkTheme = false) {
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .imePadding()
+        ) {
+            if (userId == 0) {
+                // Screen loading at initial value
+                LoadingScreen()
+            } else if (userId == null) {
+                val threadNavController = ThreadNavController(rememberNavController())
+                NavHost(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(WindowInsets.systemBars.asPaddingValues()),
+                    navController = threadNavController.navController,
+                    startDestination = LoginDestination.LOGIN.route,
+                ) {
+                    loginNavGraph(threadNavController)
+                }
+                // After update if userId still null
+                // LoginScreen(onLoginSuccess = { userPreferences.setUser(it) })
+            } else {
+                // Login authentication success
+                val globalViewModel = GlobalViewModelProvider.init(userId)
+                val user = globalViewModel.user.collectAsState().value
+                if (user.userId != 0) {
+                    // Every data about user has been fetched in GlobalViewModel
+                    // App now is ready to use
+                    MainApplication()
+                }
+            }
         }
     }
 }

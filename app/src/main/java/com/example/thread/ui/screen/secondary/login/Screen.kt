@@ -17,24 +17,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.thread.data.repository.user.UserPreferences
 import com.example.thread.ui.component.button.Button
 import com.example.thread.ui.component.common.Spacer
 import com.example.thread.ui.component.input.TextField
 import com.example.thread.ui.component.text.TextBody
 import com.example.thread.ui.component.text.TextCallOut
+import com.example.thread.ui.navigation.ThreadNavController
+import com.example.thread.ui.navigation.login.LoginDestination
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    onLoginSuccess: CoroutineScope.(userId: Int) -> Unit = {},
+    threadNavController: ThreadNavController,
 ) {
     val viewModel = LoginViewModelProvider.getInstance()
-    var login by remember {
-        mutableStateOf(true)
-    }
+    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -45,7 +49,7 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TextCallOut(
-            text = if (login) "Login with your Meme account" else "Create a new account",
+            text = "Login with your Meme account",
             bold = true
         )
         Spacer(height = 16.dp)
@@ -55,20 +59,6 @@ fun LoginScreen(
             placeHolder = "Username"
         )
         Spacer(height = 8.dp)
-        if (!login) {
-            TextField(
-                value = viewModel.firstName,
-                onValueChange = { viewModel.updateFirstName(it) },
-                placeHolder = "First name"
-            )
-            Spacer(height = 8.dp)
-            TextField(
-                value = viewModel.lastName,
-                onValueChange = { viewModel.updateLastName(it) },
-                placeHolder = "Last name"
-            )
-            Spacer(height = 8.dp)
-        }
         TextField(
             value = viewModel.password,
             onValueChange = { viewModel.updatePassword(it) },
@@ -78,23 +68,28 @@ fun LoginScreen(
         Spacer(height = 8.dp)
         Button(
             onClick = {
-                if (login) viewModel.loginSubmit(onLoginSuccess) else viewModel.createAccountSubmit(
-                    onLoginSuccess
-                )
+                viewModel.loginSubmit {
+                    UserPreferences(context).setUser(it)
+                }
             },
             modifier = Modifier.fillMaxWidth(),
             paddingValues = PaddingValues(16.dp),
             rounded = false,
             shape = RoundedCornerShape(12.dp),
-            // disable = true
         ) {
-            TextBody(text = if (login) "Login" else "Create new account", color = Color.White, bold = true)
+            TextBody(
+                text = "Login",
+                color = Color.White,
+                bold = true
+            )
         }
         Spacer(height = 16.dp)
         TextBody(
-            text = if (login) "Or create an account" else "Back to login",
+            text = "Or create an account",
             color = Color.Gray,
-            modifier = Modifier.clickable { login = !login }
+            modifier = Modifier.clickable {
+                threadNavController.navigate(LoginDestination.SIGN_UP.route)
+            }
         )
     }
 }
@@ -102,5 +97,5 @@ fun LoginScreen(
 @Preview(showSystemUi = true)
 @Composable
 private fun LoginScreenPreview() {
-    LoginScreen()
+    // LoginScreen()
 }

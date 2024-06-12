@@ -32,6 +32,15 @@ interface ApiService {
     @POST("upload/images")
     fun uploadImages(@Part images: List<MultipartBody.Part>): Call<List<String>>
 
+    @GET("code/get")
+    suspend fun getConfirmationCode(@Header("email") email: String): Response<Unit>
+
+    @GET("code/check")
+    suspend fun checkConfirmationCode(
+        @Header("email") email: String,
+        @Header("code") code: Int,
+    ): Response<Unit>
+
     // 1.1. Get User by `userId`
     @GET("user")
     fun getUser(

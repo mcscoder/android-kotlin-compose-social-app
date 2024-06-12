@@ -1,42 +1,27 @@
 package com.example.thread.ui.component.input
 
-import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Shapes
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.nativeKeyCode
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.thread.data.model.common.Message
+import com.example.thread.data.model.common.MessageType
+import com.example.thread.ui.component.text.TextLabel
 
 @Composable
-fun TextField(
+fun MessageTextField(
     modifier: Modifier = Modifier,
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
@@ -58,45 +43,38 @@ fun TextField(
     endIcon: @Composable () -> Unit = {},
     singleLine: Boolean = true,
     password: Boolean = false,
+    message: Message? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+
     onEnter: () -> Unit = {},
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    Row(
-        modifier = modifier
-            .background(backgroundColor, shape)
-            .border(1.dp, borderColor, shape),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        startIcon()
-        BorderlessTextField(
-            modifier = Modifier
-                .weight(1f)
-                .padding(padding),
+    Column(modifier = modifier) {
+        TextField(
             value = value,
             onValueChange = onValueChange,
             placeHolder = placeHolder,
             textStyle = textStyle,
+            padding = padding,
+            backgroundColor = backgroundColor,
+            borderColor = borderColor,
+            shape = shape,
+            startIcon = startIcon,
+            endIcon = endIcon,
             singleLine = singleLine,
             password = password,
             keyboardOptions = keyboardOptions,
-            keyboardActions = KeyboardActions(onDone = {
-                keyboardController?.hide()
-                onEnter()
-            }),
+            onEnter = onEnter
         )
-        endIcon()
+        if (message != null) {
+            TextLabel(
+                modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp),
+                text = message.text,
+                color = when (message.type) {
+                    MessageType.OK -> Color.Green
+                    MessageType.ERROR -> Color.Red
+                    MessageType.WARNING -> Color.Yellow
+                }
+            )
+        }
     }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun TextFieldPreview() {
-    var threadText = remember { TextFieldValue() }
-    TextField(
-        value = threadText,
-        onValueChange = { threadText = it },
-        placeHolder = "What's new?"
-    )
 }

@@ -25,4 +25,14 @@ class ResourceRepository(
         val imageUrls = apiService.uploadImages(requestBody.build().parts).execute().body()
         return imageUrls!!
     }
+
+    // Get confirmation code
+    suspend fun getConfirmationCode(email: String) {
+        apiService.getConfirmationCode(email)
+    }
+
+    // Check confirmation code
+    suspend fun checkConfirmationCode(email: String, code: Int): Boolean {
+        return apiService.checkConfirmationCode(email, code).isSuccessful
+    }
 }
