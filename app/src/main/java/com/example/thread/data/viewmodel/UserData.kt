@@ -2,7 +2,6 @@ package com.example.thread.data.viewmodel
 
 import com.example.thread.data.model.user.UserResponse
 import com.example.thread.data.repository.user.UserRepository
-import com.example.thread.ui.screen.GlobalViewModelProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +15,19 @@ class UserData(private val userId: Int) {
     val data: StateFlow<UserResponse?> = _data.asStateFlow()
 
     private val userRepository = UserRepository()
+
+    fun updateBio(newBio: String) {
+        _data.update { data ->
+            var updatedData = data
+            if (updatedData != null) {
+                var updatedUser = updatedData.user
+
+                updatedUser = updatedUser.copy(bio = newBio)
+                updatedData = updatedData.copy(user = updatedUser)
+            }
+            updatedData
+        }
+    }
 
     fun retrieveUserData() {
         CoroutineScope(Dispatchers.IO).launch {

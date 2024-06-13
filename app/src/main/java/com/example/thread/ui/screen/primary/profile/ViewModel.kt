@@ -9,6 +9,7 @@ import com.example.thread.data.model.thread.ThreadType
 import com.example.thread.data.viewmodel.threaddata.ThreadsData
 import com.example.thread.data.viewmodel.UserData
 import com.example.thread.data.viewmodel.MainThreadWithRepliesData
+import com.example.thread.data.viewmodel.TextData
 import com.example.thread.ui.screen.GlobalViewModelProvider
 import com.example.thread.ui.screen.ThreadViewModelProvider
 import com.example.thread.ui.screen.ViewModelProviderManager

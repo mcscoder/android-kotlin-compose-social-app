@@ -34,12 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.thread.data.model.thread.ThreadType
 import com.example.thread.data.model.user.UserResponse
+import com.example.thread.data.viewmodel.TextData
 import com.example.thread.ui.component.button.Button
 import com.example.thread.ui.component.button.ButtonVariant
 import com.example.thread.ui.component.button.IconClickable
 import com.example.thread.ui.component.button.TitleDescription
 import com.example.thread.ui.component.common.Spacer
 import com.example.thread.ui.component.feed.FeedCard
+import com.example.thread.ui.component.input.TextField
 import com.example.thread.ui.component.layout.BottomSheet
 import com.example.thread.ui.component.layout.ScaffoldBottomSheet
 import com.example.thread.ui.component.layout.TabRowLayout
@@ -148,7 +150,11 @@ fun ProfileHeader(
             showBottomSheet = false
         },
     ) { paddingValues ->
-        EditProfileScreen(modifier = Modifier.padding(paddingValues), user = user)
+        EditProfileScreen(
+            modifier = Modifier.padding(paddingValues),
+            user = user,
+            viewModel = viewModel
+        )
     }
 }
 
@@ -306,16 +312,26 @@ fun ProfileScreen(
 fun EditProfileScreen(
     modifier: Modifier = Modifier,
     user: UserResponse,
+    viewModel: ProfileViewModel,
 ) {
-    var showPickAvatar by remember {
+    var displayAvatarOptions by remember {
         mutableStateOf(false)
     }
 
+    var displayEditBio by remember {
+        mutableStateOf(false)
+    }
+
+    // Avatar options
     BottomSheet(
-        display = showPickAvatar,
-        onDismiss = { showPickAvatar = false }
+        display = displayAvatarOptions,
+        onDismiss = { displayAvatarOptions = false }
     ) {
         TextBody(text = "That worked")
+    }
+
+    val bio = remember {
+        TextData(user.user.bio ?: "")
     }
 
     Column(
@@ -331,7 +347,7 @@ fun EditProfileScreen(
                 size = 128.dp,
                 enableClick = true
             ) {
-                showPickAvatar = true
+                displayAvatarOptions = true
             }
         }
         Spacer(height = 24.dp)
@@ -352,9 +368,34 @@ fun EditProfileScreen(
                     title = "Bio",
                     description = user.user.bio,
                     placeholder = "+ Write bio",
-                    modifier = Modifier.clickable { }
+                    modifier = Modifier.clickable { displayEditBio = true }
                 )
             }
+        }
+    }
+
+    // Bio edit screen
+    ScaffoldBottomSheet(
+        display = displayEditBio,
+        onDismiss = { displayEditBio = false },
+        title = "Edit bio",
+        onCancel = { displayEditBio = false },
+        onDone = {
+            viewModel.userData.updateBio(bio.value.text)
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier.padding(
+                horizontal = 16.dp,
+                vertical = paddingValues.calculateTopPadding() + 16.dp
+            )
+        ) {
+            TextField(
+                value = bio.value,
+                onValueChange = { bio.setText(it) },
+                backgroundColor = Color.White,
+                singleLine = false
+            )
         }
     }
 }
