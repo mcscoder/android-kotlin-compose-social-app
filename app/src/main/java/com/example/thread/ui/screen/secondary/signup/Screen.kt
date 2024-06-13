@@ -22,6 +22,7 @@ import com.example.thread.ui.component.layout.SignUpLayout
 import com.example.thread.ui.component.text.TextBody
 import com.example.thread.ui.navigation.ThreadNavController
 import com.example.thread.ui.navigation.login.LoginDestination
+import com.example.thread.ui.screen.ViewModelProviderManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -176,6 +177,7 @@ fun PickUsername(threadNavController: ThreadNavController) {
                 onClick = {
                     viewModel.createAccountSubmit() { userId ->
                         UserPreferences(context).setUser(userId)
+                        SignUpViewModelProvider.clear()
                     }
                 },
                 rounded = false,

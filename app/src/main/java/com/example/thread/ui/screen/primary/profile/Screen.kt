@@ -1,22 +1,32 @@
 package com.example.thread.ui.screen.primary.profile
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,7 +37,11 @@ import com.example.thread.data.model.user.UserResponse
 import com.example.thread.ui.component.button.Button
 import com.example.thread.ui.component.button.ButtonVariant
 import com.example.thread.ui.component.button.IconClickable
+import com.example.thread.ui.component.button.TitleDescription
+import com.example.thread.ui.component.common.Spacer
 import com.example.thread.ui.component.feed.FeedCard
+import com.example.thread.ui.component.layout.BottomSheet
+import com.example.thread.ui.component.layout.ScaffoldBottomSheet
 import com.example.thread.ui.component.layout.TabRowLayout
 import com.example.thread.ui.component.layout.lazyThreadDetailsCard
 import com.example.thread.ui.component.navigation.ThreadTopBar
@@ -40,6 +54,7 @@ import com.example.thread.ui.navigation.followerlist.FollowerListDestination
 import com.example.thread.ui.navigation.myprofile.MyProfileDestination
 import com.example.thread.ui.screen.GlobalViewModelProvider
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileHeader(
     threadNavController: ThreadNavController,
@@ -47,6 +62,10 @@ fun ProfileHeader(
     viewModel: ProfileViewModel,
     myProfile: Boolean,
 ) {
+    var showBottomSheet by remember {
+        mutableStateOf(false)
+    }
+
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Row(modifier = Modifier.height(IntrinsicSize.Min)) {
             Column(
@@ -76,7 +95,7 @@ fun ProfileHeader(
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             if (myProfile) {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { showBottomSheet = true },
                     rounded = false,
                     modifier = Modifier.weight(1f),
                     buttonVariant = ButtonVariant.OUTLINED
@@ -117,9 +136,22 @@ fun ProfileHeader(
             }
         }
     }
+
+    val sheetState = rememberModalBottomSheetState(true)
+
+    ScaffoldBottomSheet(
+        sheetState = sheetState,
+        display = showBottomSheet,
+        onDismiss = { showBottomSheet = false },
+        title = "Edit profile",
+        onCancel = {
+            showBottomSheet = false
+        },
+    ) { paddingValues ->
+        EditProfileScreen(modifier = Modifier.padding(paddingValues), user = user)
+    }
 }
 
-// 1. Profile Screen [Primary]
 @Composable
 fun ProfileScreen(
     threadNavController: ThreadNavController,
@@ -264,6 +296,64 @@ fun ProfileScreen(
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditProfileScreen(
+    modifier: Modifier = Modifier,
+    user: UserResponse,
+) {
+    var showPickAvatar by remember {
+        mutableStateOf(false)
+    }
+
+    BottomSheet(
+        display = showPickAvatar,
+        onDismiss = { showPickAvatar = false }
+    ) {
+        TextBody(text = "That worked")
+    }
+
+    Column(
+        modifier = modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxSize()
+    ) {
+        Spacer(height = 24.dp)
+        Box(Modifier.fillMaxWidth()) {
+            UserAvatar(
+                modifier = Modifier.align(Alignment.Center),
+                avatarURL = user.user.imageUrl,
+                size = 128.dp,
+                enableClick = true
+            ) {
+                showPickAvatar = true
+            }
+        }
+        Spacer(height = 24.dp)
+        Box(modifier = Modifier.background(Color.White, RoundedCornerShape(16.dp))) {
+            Column(
+                modifier = Modifier
+                    .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+            ) {
+                TitleDescription(
+                    title = "Name",
+                    description = "${user.user.firstName} ${user.user.lastName}",
+                    modifier = Modifier.clickable { }
+                )
+                Spacer(height = 20.dp)
+                TitleDescription(
+                    title = "Bio",
+                    description = user.user.bio,
+                    placeholder = "+ Write bio",
+                    modifier = Modifier.clickable { }
+                )
             }
         }
     }

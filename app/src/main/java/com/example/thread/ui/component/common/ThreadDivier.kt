@@ -12,14 +12,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ThreadHorizontalDivider() {
-    Divider(modifier = Modifier.fillMaxWidth(), thickness = 1.dp, color = Color(217, 217, 217))
+fun ThreadHorizontalDivider(modifier: Modifier = Modifier) {
+    Divider(modifier = modifier.fillMaxWidth(), thickness = 1.dp, color = Color(217, 217, 217))
 }
 
 @Composable
-fun ThreadVerticalDivider() {
+fun ThreadVerticalDivider(modifier: Modifier = Modifier) {
     Divider(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxHeight()
             .width(2.dp)
             .clip(CircleShape),

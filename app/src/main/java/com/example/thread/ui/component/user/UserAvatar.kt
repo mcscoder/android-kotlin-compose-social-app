@@ -1,11 +1,16 @@
 package com.example.thread.ui.component.user
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,6 +26,8 @@ fun UserAvatar(
     modifier: Modifier = Modifier,
     size: Dp = 36.dp,
     contentScale: ContentScale = ContentScale.Crop,
+    enableClick: Boolean = false,
+    onClick: () -> Unit = {},
 ) {
     // Image(
     //     painter = painterResource(id = R.drawable.yasuo_avt),
@@ -29,14 +36,18 @@ fun UserAvatar(
     //         .size(36.dp)
     //         .clip(CircleShape),
     // )
-    AsyncImage(
-        model = RetrofitInstance.publicResourceURL(avatarURL),
-        contentDescription = null,
+    Box(
         modifier = modifier
-            .size(size)
-            .clip(CircleShape),
-        contentScale = contentScale
-    )
+            .clip(CircleShape)
+            .clickable(enableClick) { onClick() }
+    ) {
+        AsyncImage(
+            model = RetrofitInstance.publicResourceURL(avatarURL),
+            contentDescription = null,
+            modifier = Modifier.size(size),
+            contentScale = contentScale
+        )
+    }
 }
 
 @Preview

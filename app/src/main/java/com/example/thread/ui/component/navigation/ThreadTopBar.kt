@@ -22,14 +22,15 @@ import com.example.thread.ui.navigation.ThreadNavController
 
 @Composable
 fun ThreadTopBar(
-    threadNavController: ThreadNavController,
+    modifier: Modifier = Modifier,
+    threadNavController: ThreadNavController? = null,
     title: String = "",
     actions: @Composable RowScope.() -> Unit = {},
     onNavigateUp: () -> Unit = {},
     showDivider: Boolean = true,
-    showBackButton: Boolean = true,
+    showBackButton: Boolean = true
 ) {
-    Column {
+    Column(modifier = modifier) {
         Row(
             modifier = Modifier
                 .height(52.dp)
@@ -42,7 +43,7 @@ fun ThreadTopBar(
                     IconClickable(
                         imageVector = Icons.Rounded.ArrowBack,
                         onClick = {
-                            threadNavController.navigateUp()
+                            threadNavController?.navigateUp()
                             onNavigateUp()
                         }
                     )
