@@ -4,7 +4,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.thread.data.model.user.UserRegisterRequest
 import com.example.thread.data.repository.resource.ResourceRepository
+import com.example.thread.data.repository.user.UserRepository
 import com.example.thread.data.viewmodel.MessageData
 import com.example.thread.data.viewmodel.TextData
 import com.example.thread.ui.screen.ThreadViewModelProvider
@@ -34,8 +36,10 @@ object SignUpViewModelProvider : ThreadViewModelProvider {
     }
 }
 
-class SignUpViewModel(private val resourceRepository: ResourceRepository = ResourceRepository()) :
-    ViewModel() {
+class SignUpViewModel(
+    private val resourceRepository: ResourceRepository = ResourceRepository(),
+    private val userRepository: UserRepository = UserRepository(),
+) : ViewModel() {
     val email = TextData()
     val code = TextData()
     val message = MessageData()
@@ -43,6 +47,30 @@ class SignUpViewModel(private val resourceRepository: ResourceRepository = Resou
     val lastName = TextData()
     val password = TextData()
     val username = TextData()
+
+    fun createAccountSubmit(onLoginSuccess: CoroutineScope.(userId: Int) -> Unit = {}) {
+        registerUser(onLoginSuccess)
+    }
+
+    private fun registerUser(onLoginSuccess: CoroutineScope.(userId: Int) -> Unit = {}) {
+        viewModelScope.launch {
+            val registerRequest =
+                UserRegisterRequest(
+                    username.value.text,
+                    firstName.value.text,
+                    lastName.value.text,
+                    email.value.text,
+                    password.value.text
+                )
+            val userId = userRepository.userRegister(registerRequest)
+
+            onLoginSuccess(userId)
+        }
+    }
+
+    fun setDefaultUsername() {
+        username.setText("${firstName.value.text}_${lastName.value.text}")
+    }
 
     fun getConfirmationCode() {
         viewModelScope.launch(Dispatchers.IO) {

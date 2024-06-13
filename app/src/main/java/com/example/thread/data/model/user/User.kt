@@ -9,6 +9,7 @@ data class User(
     val username: String = "",
     val firstName: String = "",
     val lastName: String = "",
+    val email: String = "",
     val imageUrl: String = "",
 )
 
@@ -40,7 +41,7 @@ data class UserReplies(
 )
 
 data class UserLoginRequest(
-    val username: String,
+    val email: String,
     val password: String,
 )
 
@@ -48,5 +49,6 @@ data class UserRegisterRequest(
     val username: String,
     val firstName: String,
     val lastName: String,
+    val email: String,
     val password: String,
 )

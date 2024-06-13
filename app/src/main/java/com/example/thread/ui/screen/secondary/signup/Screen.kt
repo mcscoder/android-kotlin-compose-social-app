@@ -8,10 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.thread.data.model.common.MessageType
+import com.example.thread.data.repository.user.UserPreferences
 import com.example.thread.ui.component.button.Button
 import com.example.thread.ui.component.common.Spacer
 import com.example.thread.ui.component.input.MessageTextField
@@ -142,7 +144,7 @@ fun NameAndPasswordScreen(threadNavController: ThreadNavController) {
             Button(
                 modifier = Modifier.weight(1f),
                 onClick = {
-                    viewModel.username.setText("${viewModel.firstName.value.text}_${viewModel.lastName.value.text}")
+                    viewModel.setDefaultUsername()
                     threadNavController.navigate(LoginDestination.PICK_USERNAME.route)
                 },
                 rounded = false,
@@ -159,6 +161,7 @@ fun PickUsername(threadNavController: ThreadNavController) {
     val viewModel = remember {
         SignUpViewModelProvider.getInstance()
     }
+    val context = LocalContext.current
 
     SignUpLayout(threadNavController = threadNavController, title = "Pick Username") {
         MessageTextField(
@@ -170,7 +173,11 @@ fun PickUsername(threadNavController: ThreadNavController) {
         Row {
             Button(
                 modifier = Modifier.weight(1f),
-                onClick = {},
+                onClick = {
+                    viewModel.createAccountSubmit() { userId ->
+                        UserPreferences(context).setUser(userId)
+                    }
+                },
                 rounded = false,
                 paddingValues = PaddingValues(horizontal = 20.dp, vertical = 14.dp)
             ) {

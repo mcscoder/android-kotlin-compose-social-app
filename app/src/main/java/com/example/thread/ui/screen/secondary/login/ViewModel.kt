@@ -40,25 +40,11 @@ class LoginViewModel(private val userRepository: UserRepository = UserRepository
     var username by mutableStateOf(TextFieldValue())
         private set
 
-    var firstName by mutableStateOf(TextFieldValue())
-        private set
-
-    var lastName by mutableStateOf(TextFieldValue())
-        private set
-
     var password by mutableStateOf(TextFieldValue())
         private set
 
     fun updateUsername(newUsername: TextFieldValue) {
         username = newUsername
-    }
-
-    fun updateFirstName(newFirstName: TextFieldValue) {
-        firstName = newFirstName
-    }
-
-    fun updateLastName(newLastName: TextFieldValue) {
-        lastName = newLastName
     }
 
     fun updatePassword(newPassword: TextFieldValue) {
@@ -68,26 +54,6 @@ class LoginViewModel(private val userRepository: UserRepository = UserRepository
     fun loginSubmit(onLoginSuccess: CoroutineScope.(userId: Int) -> Unit = {}) {
         if (username.text.isNotEmpty() && password.text.isNotEmpty()) {
             fetchUser(onLoginSuccess)
-        }
-    }
-
-    fun createAccountSubmit(onLoginSuccess: CoroutineScope.(userId: Int) -> Unit = {}) {
-        if (username.text.isNotEmpty() &&
-            password.text.isNotEmpty() &&
-            firstName.text.isNotEmpty() &&
-            lastName.text.isNotEmpty()
-        ) {
-            registerUser(onLoginSuccess)
-        }
-    }
-
-    private fun registerUser(onLoginSuccess: CoroutineScope.(userId: Int) -> Unit = {}) {
-        viewModelScope.launch {
-            val registerRequest =
-                UserRegisterRequest(username.text, firstName.text, lastName.text, password.text)
-            val userId = userRepository.userRegister(registerRequest)
-
-            onLoginSuccess(userId)
         }
     }
 
