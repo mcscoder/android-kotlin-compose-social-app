@@ -21,7 +21,7 @@ fun TitleDescription(
     Column(modifier = modifier) {
         TextBody(text = title, bold = true)
         Spacer(height = 4.dp)
-        if (description != null) {
+        if (!description.isNullOrEmpty()) {
             TextBody(text = description, fontSize = 13.sp)
         } else {
             TextBody(text = placeholder, color = Color.Gray, fontSize = 13.sp)

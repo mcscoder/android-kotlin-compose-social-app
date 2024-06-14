@@ -4,9 +4,11 @@ import com.example.thread.data.ApiService
 import com.example.thread.data.RetrofitInstance
 import com.example.thread.data.model.activity.FollowActivity
 import com.example.thread.data.model.user.ActivityFollowResponse
+import com.example.thread.data.model.user.UpdateProfileRequest
 import com.example.thread.data.model.user.UserLoginRequest
 import com.example.thread.data.model.user.UserRegisterRequest
 import com.example.thread.data.model.user.UserResponse
+import retrofit2.http.POST
 
 class UserRepository(
     private val apiService: ApiService = RetrofitInstance.apiService,
@@ -39,5 +41,11 @@ class UserRepository(
     // 1.6. Create new account
     suspend fun userRegister(requestBody: UserRegisterRequest): Int {
         return apiService.userRegister(requestBody).body()!!
+    }
+
+    // 1.7. Update User profile
+    @POST("user/profile")
+    suspend fun updateUserProfile(requestBody: UpdateProfileRequest): Boolean {
+        return apiService.updateUserProfile(requestBody).isSuccessful
     }
 }

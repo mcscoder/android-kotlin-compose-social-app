@@ -10,7 +10,7 @@ data class User(
     val firstName: String = "",
     val lastName: String = "",
     val email: String = "",
-    val bio: String? = null,
+    val bio: String = "",
     val imageUrl: String = "",
 )
 
@@ -52,4 +52,10 @@ data class UserRegisterRequest(
     val lastName: String,
     val email: String,
     val password: String,
+)
+
+data class UpdateProfileRequest(
+    val firstName: String,
+    val lastName: String,
+    val bio: String,
 )

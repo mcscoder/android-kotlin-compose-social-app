@@ -4,8 +4,10 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -32,8 +34,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.thread.ui.component.text.TextBody
 
 @Composable
 fun TextField(
@@ -41,6 +45,7 @@ fun TextField(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
     placeHolder: String? = null,
+    label: String? = null,
     textStyle: TextStyle = TextStyle(
         color = Color.Black,
         fontSize = 15.sp,
@@ -57,36 +62,51 @@ fun TextField(
     startIcon: @Composable () -> Unit = {},
     endIcon: @Composable () -> Unit = {},
     singleLine: Boolean = true,
+    minLines: Int = 1,
     password: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onEnter: () -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    Row(
+    Column(
         modifier = modifier
             .background(backgroundColor, shape)
             .border(1.dp, borderColor, shape),
-        verticalAlignment = Alignment.CenterVertically
     ) {
-        startIcon()
-        BorderlessTextField(
-            modifier = Modifier
-                .weight(1f)
-                .padding(padding),
-            value = value,
-            onValueChange = onValueChange,
-            placeHolder = placeHolder,
-            textStyle = textStyle,
-            singleLine = singleLine,
-            password = password,
-            keyboardOptions = keyboardOptions,
-            keyboardActions = KeyboardActions(onDone = {
-                keyboardController?.hide()
-                onEnter()
-            }),
-        )
-        endIcon()
+        if (!label.isNullOrEmpty()) {
+            TextBody(
+                text = label,
+                bold = true,
+                modifier = Modifier.padding(
+                    start = padding.calculateStartPadding(LayoutDirection.Ltr),
+                    top = 16.dp
+                )
+            )
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            startIcon()
+            BorderlessTextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(padding),
+                value = value,
+                onValueChange = onValueChange,
+                placeHolder = placeHolder,
+                textStyle = textStyle,
+                singleLine = singleLine,
+                minLines = minLines,
+                password = password,
+                keyboardOptions = keyboardOptions,
+                keyboardActions = KeyboardActions(onDone = {
+                    keyboardController?.hide()
+                    onEnter()
+                }),
+            )
+            endIcon()
+        }
     }
 }
 
@@ -97,6 +117,7 @@ private fun TextFieldPreview() {
     TextField(
         value = threadText,
         onValueChange = { threadText = it },
-        placeHolder = "What's new?"
+        placeHolder = "What's new?",
+        label = "Bio"
     )
 }

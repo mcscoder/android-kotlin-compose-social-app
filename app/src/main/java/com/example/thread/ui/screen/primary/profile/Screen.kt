@@ -21,6 +21,8 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +41,7 @@ import com.example.thread.ui.component.button.Button
 import com.example.thread.ui.component.button.ButtonVariant
 import com.example.thread.ui.component.button.IconClickable
 import com.example.thread.ui.component.button.TitleDescription
+import com.example.thread.ui.component.common.ConfirmationAlert
 import com.example.thread.ui.component.common.Spacer
 import com.example.thread.ui.component.feed.FeedCard
 import com.example.thread.ui.component.input.TextField
@@ -55,6 +58,7 @@ import com.example.thread.ui.navigation.ThreadNavController
 import com.example.thread.ui.navigation.followerlist.FollowerListDestination
 import com.example.thread.ui.navigation.myprofile.MyProfileDestination
 import com.example.thread.ui.screen.GlobalViewModelProvider
+import okhttp3.internal.wait
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,7 +68,7 @@ fun ProfileHeader(
     viewModel: ProfileViewModel,
     myProfile: Boolean,
 ) {
-    var showBottomSheet by remember {
+    val showBottomSheet = remember {
         mutableStateOf(false)
     }
 
@@ -97,7 +101,7 @@ fun ProfileHeader(
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             if (myProfile) {
                 Button(
-                    onClick = { showBottomSheet = true },
+                    onClick = { showBottomSheet.value = true },
                     rounded = false,
                     modifier = Modifier.weight(1f),
                     buttonVariant = ButtonVariant.OUTLINED
@@ -140,20 +144,46 @@ fun ProfileHeader(
     }
 
     val sheetState = rememberModalBottomSheetState(true)
+    val displaySaveConfirmation = remember {
+        mutableStateOf(false)
+    }
 
+    // Edit Profile Screen
     ScaffoldBottomSheet(
         sheetState = sheetState,
         display = showBottomSheet,
-        onDismiss = { showBottomSheet = false },
         title = "Edit profile",
-        onCancel = {
-            showBottomSheet = false
+        onCancel = { dismiss ->
+            // Just close the bottom sheet
+            dismiss()
         },
-    ) { paddingValues ->
+        onDone = { dismiss ->
+            if (viewModel.userData.isProfileInfoChanged()) {
+                // Show a confirmation dialog if there are any changes
+                displaySaveConfirmation.value = true
+            } else {
+                // Otherwise, just close the bottom sheet
+                dismiss()
+            }
+        }
+    ) { paddingValues, dismiss ->
         EditProfileScreen(
             modifier = Modifier.padding(paddingValues),
             user = user,
             viewModel = viewModel
+        )
+
+        // Confirmation dialog
+        ConfirmationAlert(
+            showDialog = displaySaveConfirmation,
+            title = "Update your profile",
+            text = "Are you sure to update your profile",
+            onConfirmClick = {
+                // Update the user profile to the server
+                viewModel.userData.updateProfile()
+                // Close the bottom sheet after updated
+                dismiss()
+            }
         )
     }
 }
@@ -317,21 +347,18 @@ fun EditProfileScreen(
     var displayAvatarOptions by remember {
         mutableStateOf(false)
     }
-
-    var displayEditBio by remember {
+    val displayEditBio = remember {
+        mutableStateOf(false)
+    }
+    val displayEditName = remember {
         mutableStateOf(false)
     }
 
-    // Avatar options
-    BottomSheet(
-        display = displayAvatarOptions,
-        onDismiss = { displayAvatarOptions = false }
-    ) {
-        TextBody(text = "That worked")
-    }
 
-    val bio = remember {
-        TextData(user.user.bio ?: "")
+    LaunchedEffect(null) {
+        viewModel.userData.setDefaultEditedBio()
+        viewModel.userData.setDefaultEditedFirstName()
+        viewModel.userData.setDefaultEditedLastName()
     }
 
     Column(
@@ -360,42 +387,134 @@ fun EditProfileScreen(
             ) {
                 TitleDescription(
                     title = "Name",
-                    description = "${user.user.firstName} ${user.user.lastName}",
-                    modifier = Modifier.clickable { }
+                    description = "${viewModel.userData.editedFirstName.value.text} ${viewModel.userData.editedLastName.value.text}",
+                    modifier = Modifier.clickable { displayEditName.value = true }
                 )
                 Spacer(height = 20.dp)
                 TitleDescription(
                     title = "Bio",
-                    description = user.user.bio,
+                    description = viewModel.userData.editedBio.value.text,
                     placeholder = "+ Write bio",
-                    modifier = Modifier.clickable { displayEditBio = true }
+                    modifier = Modifier.clickable { displayEditBio.value = true }
                 )
             }
         }
     }
 
-    // Bio edit screen
-    ScaffoldBottomSheet(
+    // Avatar options
+    BottomSheet(
+        display = displayAvatarOptions,
+        onDismiss = { displayAvatarOptions = false }
+    ) {
+        TextBody(text = "That worked")
+    }
+
+    EditBioScreen(
+        viewModel = viewModel,
         display = displayEditBio,
-        onDismiss = { displayEditBio = false },
-        title = "Edit bio",
-        onCancel = { displayEditBio = false },
-        onDone = {
-            viewModel.userData.updateBio(bio.value.text)
+    )
+
+    EditNameScreen(
+        viewModel = viewModel,
+        display = displayEditName,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditBioScreen(
+    viewModel: ProfileViewModel,
+    display: MutableState<Boolean>,
+) {
+    if (display.value) {
+        val newBio = remember {
+            TextData(viewModel.userData.editedBio.value.text)
         }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier.padding(
-                horizontal = 16.dp,
-                vertical = paddingValues.calculateTopPadding() + 16.dp
-            )
-        ) {
-            TextField(
-                value = bio.value,
-                onValueChange = { bio.setText(it) },
-                backgroundColor = Color.White,
-                singleLine = false
-            )
+        // Bio edit screen
+        ScaffoldBottomSheet(
+            display = display,
+            title = "Edit bio",
+            onCancel = { dismiss ->
+                // Just close the bottom sheet
+                dismiss()
+            },
+            onDone = { dismiss ->
+                // Update value to updated variable
+                viewModel.userData.editedBio.setText(newBio.value)
+
+                // Close the bottom sheet after updated
+                dismiss()
+            }
+        ) { paddingValues, dismiss ->
+            Box(
+                modifier = Modifier.padding(
+                    horizontal = 16.dp,
+                    vertical = paddingValues.calculateTopPadding() + 16.dp
+                )
+            ) {
+                TextField(
+                    value = newBio.value,
+                    onValueChange = { newBio.setText(it) },
+                    placeHolder = "Write a bio...",
+                    label = "Bio",
+                    backgroundColor = Color.White,
+                    singleLine = false,
+                    minLines = 5
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditNameScreen(viewModel: ProfileViewModel, display: MutableState<Boolean>) {
+    if (display.value) {
+        val newFirstName = remember {
+            TextData(viewModel.userData.editedFirstName.value.text)
+        }
+        val newLastName = remember {
+            TextData(viewModel.userData.editedLastName.value.text)
+        }
+        // Edit name screen
+        ScaffoldBottomSheet(
+            display = display,
+            title = "Edit name",
+            onCancel = { dismiss ->
+                // Just close the bottom sheet
+                dismiss()
+            },
+            onDone = { dismiss ->
+                // Update value to updated variables
+                viewModel.userData.editedFirstName.setText(newFirstName.value)
+                viewModel.userData.editedLastName.setText(newLastName.value)
+
+                // Close the bottom sheet after updated
+                dismiss()
+            }
+        ) { paddingValues, dismiss ->
+            Column(
+                modifier = Modifier.padding(
+                    horizontal = 16.dp,
+                    vertical = paddingValues.calculateTopPadding() + 16.dp
+                )
+            ) {
+                TextField(
+                    value = newFirstName.value,
+                    onValueChange = { newFirstName.setText(it) },
+                    placeHolder = "Your first name...",
+                    label = "First name",
+                    backgroundColor = Color.White,
+                )
+                Spacer(height = 16.dp)
+                TextField(
+                    value = newLastName.value,
+                    onValueChange = { newLastName.setText(it) },
+                    placeHolder = "Your last name...",
+                    label = "Last name",
+                    backgroundColor = Color.White,
+                )
+            }
         }
     }
 }

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +15,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,8 +56,7 @@ fun BottomSheet(
 fun ScaffoldBottomSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(true),
-    display: Boolean,
-    onDismiss: () -> Unit,
+    display: MutableState<Boolean>,
     title: String,
     doneContent: @Composable BoxScope.() -> Unit = {
         TextCallOut(
@@ -67,16 +66,24 @@ fun ScaffoldBottomSheet(
             bold = true,
         )
     },
-    onCancel: () -> Unit,
-    onDone: () -> Unit = {},
-    content: @Composable ColumnScope.(PaddingValues) -> Unit,
+    onCancel: (dismiss: () -> Unit) -> Unit,
+    onDone: (dismiss: () -> Unit) -> Unit,
+    content: @Composable ColumnScope.(paddingValues: PaddingValues, dismiss: () -> Unit) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
+
+    fun dismiss() {
+        coroutineScope.launch {
+            sheetState.hide()
+            display.value = false
+        }
+    }
+
     BottomSheet(
         modifier = modifier,
         sheetState = sheetState,
-        display = display,
-        onDismiss = onDismiss,
+        display = display.value,
+        onDismiss = { dismiss() },
         dragHandle = null
     ) {
         ThreadScaffold(topBar = {
@@ -86,10 +93,8 @@ fun ScaffoldBottomSheet(
                 actions = {
                     Box(
                         modifier = Modifier.clickable {
-                            coroutineScope.launch {
-                                sheetState.hide()
-                                onDone()
-                                onCancel()
+                            onDone() {
+                                dismiss()
                             }
                         }
                     ) {
@@ -97,14 +102,13 @@ fun ScaffoldBottomSheet(
                     }
                 },
                 onNavigateUp = {
-                    coroutineScope.launch {
-                        sheetState.hide()
-                        onCancel()
+                    onCancel() {
+                        dismiss()
                     }
                 }
             )
         }) { paddingValues ->
-            content(paddingValues)
+            content(paddingValues) { dismiss() }
         }
     }
 }

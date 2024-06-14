@@ -42,6 +42,7 @@ fun BorderlessTextField(
         lineHeight = 21.sp,
     ),
     singleLine: Boolean = false,
+    minLines: Int = 1,
     keyboardActions: KeyboardActions = KeyboardActions(),
     password: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
@@ -67,6 +68,7 @@ fun BorderlessTextField(
             innerTextField()
         },
         singleLine = singleLine,
+        minLines = minLines,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         visualTransformation = if (password) PasswordVisualTransformation() else VisualTransformation.None

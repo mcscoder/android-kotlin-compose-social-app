@@ -7,6 +7,7 @@ import com.example.thread.data.model.thread.MainThreadWithRepliesResponse
 import com.example.thread.data.model.thread.ThreadResponse
 import com.example.thread.data.model.thread.ThreadRequest
 import com.example.thread.data.model.user.ActivityFollowResponse
+import com.example.thread.data.model.user.UpdateProfileRequest
 import com.example.thread.data.model.user.UserLoginRequest
 import com.example.thread.data.model.user.UserRegisterRequest
 import com.example.thread.data.model.user.UserReplies
@@ -78,6 +79,13 @@ interface ApiService {
     suspend fun userRegister(
         @Body requestBody: UserRegisterRequest,
     ): Response<Int>
+
+    // 1.7. Update User profile
+    @POST("user/profile")
+    suspend fun updateUserProfile(
+        @Body requestBody: UpdateProfileRequest,
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Response<Unit>
 
     // 2.1. Get Thread by `threadId`
     @GET("thread/{threadId}")
