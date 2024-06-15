@@ -22,6 +22,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
@@ -84,6 +85,13 @@ interface ApiService {
     @POST("user/profile")
     suspend fun updateUserProfile(
         @Body requestBody: UpdateProfileRequest,
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Response<Unit>
+
+    // 1.8. Update User image
+    @PATCH("user/profile/image")
+    suspend fun updateUserImage(
+        @Body imageUrl: String,
         @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Response<Unit>
 

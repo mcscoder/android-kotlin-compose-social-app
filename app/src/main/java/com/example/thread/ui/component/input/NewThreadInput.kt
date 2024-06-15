@@ -1,7 +1,6 @@
 package com.example.thread.ui.component.input
 
 import android.annotation.SuppressLint
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.horizontalScroll
@@ -20,11 +19,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.thread.ui.component.button.IconClickable
 import com.example.thread.ui.component.common.ThreadVerticalDivider
+import com.example.thread.ui.component.common.rememberMultipleImagePicker
 import com.example.thread.ui.component.image.ThreadInputImage
 import com.example.thread.ui.component.user.UserAvatar
 import com.example.thread.ui.component.user.UsernameClickable
@@ -42,20 +41,7 @@ fun NewThreadInput(
     placeHolder: String = "What's new?",
 ) {
     val user = GlobalViewModelProvider.getInstance().user.collectAsState().value
-    val contentResolver = LocalContext.current.contentResolver
-
-    val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
-            val imageFiles: MutableList<ByteArray> = mutableListOf()
-            uris.forEach { uri ->
-                val inputStream = contentResolver.openInputStream(uri)
-                if (inputStream != null) {
-                    val imageFile = inputStream.readBytes()
-                    imageFiles.add(imageFile)
-                }
-            }
-            onImageFilesChange(imageFiles)
-        }
+    val launcher = rememberMultipleImagePicker { onImageFilesChange(it) }
 
     Row(
         modifier = modifier
@@ -92,16 +78,12 @@ fun NewThreadInput(
                     }
                 }
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {1
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 IconClickable(
                     imageVector = Icons.Outlined.Image,
                     tint = Color.DarkGray,
                     onClick = {
-                        launcher.launch(
-                            PickVisualMediaRequest(
-                                ActivityResultContracts.PickVisualMedia.ImageOnly
-                            )
-                        )
+                        launcher()
                     })
 
             }

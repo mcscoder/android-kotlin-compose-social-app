@@ -8,6 +8,11 @@ import com.example.thread.data.model.user.UpdateProfileRequest
 import com.example.thread.data.model.user.UserLoginRequest
 import com.example.thread.data.model.user.UserRegisterRequest
 import com.example.thread.data.model.user.UserResponse
+import com.example.thread.ui.screen.GlobalViewModelProvider
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.Header
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 
 class UserRepository(
@@ -44,8 +49,12 @@ class UserRepository(
     }
 
     // 1.7. Update User profile
-    @POST("user/profile")
     suspend fun updateUserProfile(requestBody: UpdateProfileRequest): Boolean {
         return apiService.updateUserProfile(requestBody).isSuccessful
+    }
+
+    // 1.8. Update User image
+    suspend fun updateUserImage(imageUrl: String): Boolean {
+        return apiService.updateUserImage(imageUrl).isSuccessful
     }
 }
