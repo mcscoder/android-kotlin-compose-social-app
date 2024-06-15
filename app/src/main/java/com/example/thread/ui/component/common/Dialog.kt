@@ -5,6 +5,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 
 @Composable
 fun ConfirmationAlert(
@@ -43,4 +45,40 @@ fun ConfirmationAlert(
             }
         )
     }
+}
+
+@Composable
+fun rememberAlertDialog(
+    title: String,
+    text: String,
+    onConfirmClick: () -> Unit = {},
+    confirmationText: String = "OK",
+): () -> Unit {
+    val display = remember {
+        mutableStateOf(true)
+    }
+
+    if (display.value) {
+        AlertDialog(
+            onDismissRequest = { display.value = false },
+            title = {
+                Text(text = title)
+            },
+            text = {
+                Text(text = text)
+            },
+            confirmButton = {
+                androidx.compose.material3.TextButton(
+                    onClick = {
+                        onConfirmClick()
+                        display.value = false
+                    }
+                ) {
+                    Text(confirmationText)
+                }
+            }
+        )
+    }
+
+    return fun() { display.value = true }
 }

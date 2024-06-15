@@ -51,24 +51,17 @@ class LoginViewModel(private val userRepository: UserRepository = UserRepository
         password = newPassword
     }
 
-    fun loginSubmit(onLoginSuccess: CoroutineScope.(userId: Int) -> Unit = {}) {
+    fun loginSubmit(
+        onResponse: CoroutineScope.(userId: Int?) -> Unit = {},
+    ) {
         if (username.text.isNotEmpty() && password.text.isNotEmpty()) {
-            fetchUser(onLoginSuccess)
-        }
-    }
-
-    private fun fetchUser(onLoginSuccess: CoroutineScope.(userId: Int) -> Unit = {}) {
-        // Dispatchers.IO for a network request
-        viewModelScope.launch(context = Dispatchers.IO) {
-            val loginRequest = UserLoginRequest(username.text, password.text)
-            val userId = userRepository.loginAuthentication(loginRequest)
-
-            if (userId != null) {
-                // Authentication successfully
-                onLoginSuccess(userId)
-            } else {
-                // Authentication failed
+            viewModelScope.launch(context = Dispatchers.IO) {
+                val loginRequest = UserLoginRequest(username.text, password.text)
+                val userId = userRepository.loginAuthentication(loginRequest)
+                onResponse(userId)
             }
         }
+
+        // Dispatchers.IO for a network request
     }
 }

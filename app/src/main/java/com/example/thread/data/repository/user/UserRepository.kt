@@ -28,8 +28,8 @@ class UserRepository(
     }
 
     // 1.2. User login authentication
-    fun loginAuthentication(requestBody: UserLoginRequest): Int? {
-        return apiService.userLoginAuthentication(requestBody).execute().body()
+    suspend fun loginAuthentication(requestBody: UserLoginRequest): Int? {
+        return apiService.userLoginAuthentication(requestBody).body()
     }
 
     // 1.3. Follow or unfollow a User

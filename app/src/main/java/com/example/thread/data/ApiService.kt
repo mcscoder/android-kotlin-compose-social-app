@@ -53,7 +53,7 @@ interface ApiService {
 
     // 1.2. User login authentication
     @POST("user/authentication/login")
-    fun userLoginAuthentication(@Body requestBody: UserLoginRequest): Call<Int>
+    suspend fun userLoginAuthentication(@Body requestBody: UserLoginRequest): Response<Int?>
 
     // 1.3. Follow or unfollow a User
     @GET("user/follow")
