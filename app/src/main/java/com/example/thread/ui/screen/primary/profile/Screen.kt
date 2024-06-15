@@ -82,6 +82,10 @@ fun ProfileHeader(
                 TextHeadLine(text = "${user.user.firstName} ${user.user.lastName}")
                 Spacer(modifier = Modifier.height(8.dp))
                 TextBody(text = user.user.username)
+                if (user.user.bio.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TextBody(text = user.user.bio)
+                }
             }
             UserAvatar(
                 avatarURL = user.user.imageUrl,

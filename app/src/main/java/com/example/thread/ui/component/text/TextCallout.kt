@@ -17,7 +17,7 @@ fun TextCallOut(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Black,
-    fontSize: TextUnit = 17.sp,
+    fontSize: TextUnit = 18.sp,
     fontStyle: FontStyle? = FontStyle.Normal,
     fontWeight: FontWeight? = FontWeight.W400,
     letterSpacing: TextUnit = TextUnit.Unspecified,

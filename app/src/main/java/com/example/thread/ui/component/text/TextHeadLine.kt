@@ -17,7 +17,7 @@ fun TextHeadLine(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Black,
-    fontSize: TextUnit = 23.sp,
+    fontSize: TextUnit = 24.sp,
     fontStyle: FontStyle = FontStyle.Normal,
     fontWeight: FontWeight = FontWeight.W700,
     letterSpacing: TextUnit = TextUnit.Unspecified,
