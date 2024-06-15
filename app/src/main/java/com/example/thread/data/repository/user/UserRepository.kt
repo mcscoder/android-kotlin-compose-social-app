@@ -14,9 +14,11 @@ import com.example.thread.data.repository.resource.ResourceRepository
 import com.example.thread.ui.screen.GlobalViewModelProvider
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 class UserRepository(
     private val apiService: ApiService = RetrofitInstance.apiService,
@@ -66,5 +68,11 @@ class UserRepository(
     // 1.9 Remove current User image
     suspend fun removeUserImage(): Boolean {
         return apiService.removeUserImage().isSuccessful
+    }
+
+    // 1.10. Check if email exists
+    // Return true if email exists and otherwise is false
+    suspend fun isEmailExists(email: String): Boolean {
+        return apiService.isEmailExists(email).isSuccessful
     }
 }

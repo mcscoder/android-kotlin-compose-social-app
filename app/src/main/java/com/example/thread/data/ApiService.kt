@@ -102,6 +102,10 @@ interface ApiService {
         @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Response<Unit>
 
+    // 1.10. Check if email exists
+    @GET("user/exist/{email}")
+    suspend fun isEmailExists(@Path("email") email: String): Response<Unit>
+
     // 2.1. Get Thread by `threadId`
     @GET("thread/{threadId}")
     suspend fun getThread(

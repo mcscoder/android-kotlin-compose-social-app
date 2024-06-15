@@ -55,7 +55,7 @@ fun rememberAlertDialog(
     confirmationText: String = "OK",
 ): () -> Unit {
     val display = remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
 
     if (display.value) {

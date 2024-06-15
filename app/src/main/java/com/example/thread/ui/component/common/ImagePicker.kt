@@ -1,5 +1,6 @@
 package com.example.thread.ui.component.common
 
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -35,9 +36,12 @@ fun rememberSingleImagePicker(
     onImageFilesChange: (ByteArray) -> Unit,
 ): () -> Unit {
     val contentResolver = LocalContext.current.contentResolver
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
+
+            Log.d("updateUserImage", "updateUserImage")
             uri?.let {
                 contentResolver.openInputStream(it)?.use { inputStream ->
                     val imageFile = inputStream.readBytes()

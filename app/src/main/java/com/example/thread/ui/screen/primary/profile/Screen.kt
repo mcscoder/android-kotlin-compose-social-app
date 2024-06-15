@@ -393,11 +393,10 @@ fun EditProfileScreen(
     }
 
     // Avatar options
+    val imagePicker = rememberSingleImagePicker { viewModel.userData.updateUserImage(it) }
     BottomSheet(
         display = displayAvatarOptions,
     ) { dismiss ->
-        val imagePicker = rememberSingleImagePicker { viewModel.userData.updateUserImage(it) }
-
         Column(
             modifier = Modifier
                 .padding(horizontal = 16.dp)

@@ -34,9 +34,14 @@ fun LoginScreen(
     val viewModel = LoginViewModelProvider.getInstance()
     val context = LocalContext.current
 
-    val displayAlert = rememberAlertDialog(
+    val loginFailedAlert = rememberAlertDialog(
         title = "Email or password is incorrect.",
         text = "The email or password you entered is incorrect. Please try again."
+    )
+
+    val invalidEmailAlert = rememberAlertDialog(
+        title = "Invalid email.",
+        text = "The email you entered is invalid. Please try again."
     )
 
     Column(
@@ -53,9 +58,9 @@ fun LoginScreen(
         )
         Spacer(height = 16.dp)
         TextField(
-            value = viewModel.username,
+            value = viewModel.email,
             onValueChange = { viewModel.updateUsername(it) },
-            placeHolder = "Username"
+            placeHolder = "Email"
         )
         Spacer(height = 8.dp)
         TextField(
@@ -67,14 +72,18 @@ fun LoginScreen(
         Spacer(height = 8.dp)
         Button(
             onClick = {
-                viewModel.loginSubmit { userId ->
+                viewModel.loginSubmit(
+                    onInvalidEmail = {
+                        invalidEmailAlert()
+                    }
+                ) { userId ->
                     if (userId != null) {
                         // Authentication success
                         UserPreferences(context).setUser(userId)
                     } else {
                         // Authentication failed
                         // Display a failed dialog
-                        displayAlert()
+                        loginFailedAlert()
                     }
                 }
             },
@@ -98,16 +107,6 @@ fun LoginScreen(
             }
         )
     }
-    //
-    // val dialog = remember {
-    //     mutableStateOf(true)
-    // }
-    //
-    // Alert(
-    //     display = dialog,
-    //     title = "Incorrect Password",
-    //     text = "The password you entered is incorrect. Please try again."
-    // )
 }
 
 @Preview(showSystemUi = true)

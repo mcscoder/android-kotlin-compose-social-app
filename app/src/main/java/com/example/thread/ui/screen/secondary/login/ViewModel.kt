@@ -7,10 +7,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.thread.data.model.user.UserLoginRequest
-import com.example.thread.data.model.user.UserRegisterRequest
 import com.example.thread.data.repository.user.UserRepository
 import com.example.thread.ui.screen.ThreadViewModelProvider
 import com.example.thread.ui.screen.ViewModelProviderManager
+import com.example.thread.util.Validations
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,14 +37,14 @@ object LoginViewModelProvider : ThreadViewModelProvider {
 }
 
 class LoginViewModel(private val userRepository: UserRepository = UserRepository()) : ViewModel() {
-    var username by mutableStateOf(TextFieldValue())
+    var email by mutableStateOf(TextFieldValue())
         private set
 
     var password by mutableStateOf(TextFieldValue())
         private set
 
-    fun updateUsername(newUsername: TextFieldValue) {
-        username = newUsername
+    fun updateUsername(newEmail: TextFieldValue) {
+        email = newEmail
     }
 
     fun updatePassword(newPassword: TextFieldValue) {
@@ -52,13 +52,18 @@ class LoginViewModel(private val userRepository: UserRepository = UserRepository
     }
 
     fun loginSubmit(
+        onInvalidEmail: () -> Unit,
         onResponse: CoroutineScope.(userId: Int?) -> Unit = {},
     ) {
-        if (username.text.isNotEmpty() && password.text.isNotEmpty()) {
-            viewModelScope.launch(context = Dispatchers.IO) {
-                val loginRequest = UserLoginRequest(username.text, password.text)
-                val userId = userRepository.loginAuthentication(loginRequest)
-                onResponse(userId)
+        if (email.text.isNotEmpty() && password.text.isNotEmpty()) {
+            if (Validations.isValidEmail(email.text)) {
+                viewModelScope.launch(context = Dispatchers.IO) {
+                    val loginRequest = UserLoginRequest(email.text, password.text)
+                    val userId = userRepository.loginAuthentication(loginRequest)
+                    onResponse(userId)
+                }
+            } else {
+                onInvalidEmail()
             }
         }
 

@@ -1,5 +1,6 @@
 package com.example.thread.data.viewmodel
 
+import android.util.Log
 import com.example.thread.data.model.user.UpdateProfileRequest
 import com.example.thread.data.model.user.UserResponse
 import com.example.thread.data.repository.user.UserRepository
@@ -76,6 +77,7 @@ class UserData(private val userId: Int) {
     }
 
     fun updateUserImage(imageFile: ByteArray) {
+        Log.d("updateUserImage", "updateUserImage")
         CoroutineScope(Dispatchers.IO).launch {
             userRepository.updateUserImage(imageFile)
             retrieveUserData()

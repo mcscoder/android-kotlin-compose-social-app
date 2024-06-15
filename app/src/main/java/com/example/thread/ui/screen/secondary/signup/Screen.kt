@@ -16,6 +16,7 @@ import com.example.thread.data.model.common.MessageType
 import com.example.thread.data.repository.user.UserPreferences
 import com.example.thread.ui.component.button.Button
 import com.example.thread.ui.component.common.Spacer
+import com.example.thread.ui.component.common.rememberAlertDialog
 import com.example.thread.ui.component.input.MessageTextField
 import com.example.thread.ui.component.input.TextField
 import com.example.thread.ui.component.layout.SignUpLayout
@@ -33,6 +34,16 @@ fun SignUpScreen(threadNavController: ThreadNavController) {
         SignUpViewModelProvider.getInstance()
     }
 
+    val invalidEmailAlert = rememberAlertDialog(
+        title = "Invalid email.",
+        text = "The email you entered is invalid. Please try again."
+    )
+
+    val emailExistsAlert = rememberAlertDialog(
+        title = "Email Exists",
+        text = "The email address you entered already exists."
+    )
+
     SignUpLayout(threadNavController = threadNavController, title = "Use the Email to Sign Up") {
         TextField(
             value = viewModel.email.value,
@@ -44,8 +55,18 @@ fun SignUpScreen(threadNavController: ThreadNavController) {
             Button(
                 modifier = Modifier.weight(1f),
                 onClick = {
-                    threadNavController.navigate(LoginDestination.CODE_CONFIRMATION.route)
-                    viewModel.getConfirmationCode()
+                    viewModel.isEmailExist(
+                        onInvalidEmail = {
+                            invalidEmailAlert()
+                        }
+                    ) { isExists ->
+                        if (isExists) {
+                            emailExistsAlert()
+                        } else {
+                            threadNavController.navigate(LoginDestination.CODE_CONFIRMATION.route)
+                            viewModel.getConfirmationCode()
+                        }
+                    }
                 },
                 rounded = false,
                 paddingValues = PaddingValues(horizontal = 20.dp, vertical = 14.dp)
@@ -61,6 +82,16 @@ fun CodeConfirmationScreen(threadNavController: ThreadNavController) {
     val viewModel = remember {
         SignUpViewModelProvider.getInstance()
     }
+
+    val resendCodeAlert = rememberAlertDialog(
+        title = "Code has been sent.",
+        text = "Your confirmation code has been sent, please check your email inbox."
+    )
+
+    val invalidCodeAlert = rememberAlertDialog(
+        title = "Invalid code.",
+        text = "The code you entered is incorrect.\nPlease try again or get a new code by click \"Resend Code\" button below"
+    )
 
     SignUpLayout(threadNavController = threadNavController, title = "Enter Confirmation Code") {
         TextBody(
@@ -89,10 +120,7 @@ fun CodeConfirmationScreen(threadNavController: ThreadNavController) {
                             }
                         } else {
                             // Failed
-                            viewModel.message.setMessage(
-                                "That code is not valid",
-                                MessageType.ERROR
-                            )
+                            invalidCodeAlert()
                         }
                     }
                 },
@@ -108,8 +136,9 @@ fun CodeConfirmationScreen(threadNavController: ThreadNavController) {
             color = Color.Blue,
             bold = true,
             modifier = Modifier.clickable {
-                viewModel.getConfirmationCode()
-                viewModel.message.setMessage("Confirmation code has been sent", MessageType.OK)
+                viewModel.getConfirmationCode() {
+                    resendCodeAlert()
+                }
             }
         )
     }

@@ -1,5 +1,6 @@
 package com.example.thread.ui.screen.secondary.signup
 
+import android.util.Patterns
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
@@ -11,6 +12,7 @@ import com.example.thread.data.viewmodel.MessageData
 import com.example.thread.data.viewmodel.TextData
 import com.example.thread.ui.screen.ThreadViewModelProvider
 import com.example.thread.ui.screen.ViewModelProviderManager
+import com.example.thread.util.Validations
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -48,6 +50,22 @@ class SignUpViewModel(
     val password = TextData()
     val username = TextData()
 
+    fun isEmailExist(
+        onInvalidEmail: () -> Unit,
+        onResponse: CoroutineScope.(isExists: Boolean) -> Unit,
+    ) {
+        if (email.value.text.isNotEmpty()) {
+            if (Validations.isValidEmail(email.value.text)) {
+                viewModelScope.launch {
+                    val exist = userRepository.isEmailExists(email.value.text)
+                    onResponse(exist)
+                }
+            } else {
+                onInvalidEmail()
+            }
+        }
+    }
+
     fun createAccountSubmit(onLoginSuccess: CoroutineScope.(userId: Int) -> Unit = {}) {
         registerUser(onLoginSuccess)
     }
@@ -72,9 +90,10 @@ class SignUpViewModel(
         username.setText("${firstName.value.text}_${lastName.value.text}")
     }
 
-    fun getConfirmationCode() {
+    fun getConfirmationCode(onResponse: CoroutineScope.() -> Unit = {}) {
         viewModelScope.launch(Dispatchers.IO) {
             resourceRepository.getConfirmationCode(email.value.text)
+            onResponse()
         }
     }
 
