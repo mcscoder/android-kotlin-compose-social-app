@@ -335,7 +335,7 @@ fun EditProfileScreen(
     user: UserResponse,
     viewModel: ProfileViewModel,
 ) {
-    var displayAvatarOptions by remember {
+    var displayAvatarOptions = remember {
         mutableStateOf(false)
     }
     val displayEditBio = remember {
@@ -365,7 +365,7 @@ fun EditProfileScreen(
                 size = 128.dp,
                 enableClick = true
             ) {
-                displayAvatarOptions = true
+                displayAvatarOptions.value = true
             }
         }
         Spacer(height = 24.dp)
@@ -395,8 +395,7 @@ fun EditProfileScreen(
     // Avatar options
     BottomSheet(
         display = displayAvatarOptions,
-        onDismiss = { displayAvatarOptions = false }
-    ) {
+    ) { dismiss ->
         val imagePicker = rememberSingleImagePicker { viewModel.userData.updateUserImage(it) }
 
         Column(
@@ -406,7 +405,10 @@ fun EditProfileScreen(
         ) {
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { imagePicker() },
+                onClick = {
+                    imagePicker()
+                    dismiss()
+                },
                 buttonVariant = ButtonVariant.FILLED,
                 rounded = false,
                 paddingValues = PaddingValues(16.dp)
@@ -418,6 +420,7 @@ fun EditProfileScreen(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     viewModel.userData.removeUserImage()
+                    dismiss()
                 },
                 buttonVariant = ButtonVariant.OUTLINED,
                 rounded = false,

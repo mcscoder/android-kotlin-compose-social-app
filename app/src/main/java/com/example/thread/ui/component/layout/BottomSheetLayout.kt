@@ -32,20 +32,30 @@ import kotlinx.coroutines.launch
 fun BottomSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(),
-    display: Boolean,
-    onDismiss: () -> Unit,
+    display: MutableState<Boolean>,
     dragHandle: @Composable (() -> Unit)? = { BottomSheetDefaults.DragHandle() },
-    content: @Composable ColumnScope.() -> Unit,
+    content: @Composable ColumnScope.(dismiss: () -> Unit) -> Unit,
 ) {
-    if (display) {
+    val coroutineScope = rememberCoroutineScope()
+
+    fun dismiss() {
+        coroutineScope.launch {
+            sheetState.hide()
+            display.value = false
+        }
+    }
+
+    if (display.value) {
         ModalBottomSheet(
             modifier = modifier.padding(top = 3.dp),
-            onDismissRequest = onDismiss,
+            onDismissRequest = {
+                dismiss()
+            },
             sheetState = sheetState,
             dragHandle = dragHandle,
             shape = RoundedCornerShape(18.dp)
         ) {
-            content()
+            content() { dismiss() }
             Spacer(height = 8.dp)
         }
     }
@@ -70,22 +80,12 @@ fun ScaffoldBottomSheet(
     onDone: (dismiss: () -> Unit) -> Unit,
     content: @Composable ColumnScope.(paddingValues: PaddingValues, dismiss: () -> Unit) -> Unit,
 ) {
-    val coroutineScope = rememberCoroutineScope()
-
-    fun dismiss() {
-        coroutineScope.launch {
-            sheetState.hide()
-            display.value = false
-        }
-    }
-
     BottomSheet(
         modifier = modifier,
         sheetState = sheetState,
-        display = display.value,
-        onDismiss = { dismiss() },
+        display = display,
         dragHandle = null
-    ) {
+    ) { dismiss ->
         ThreadScaffold(topBar = {
             ThreadTopBar(
                 modifier = Modifier.background(Color.White),
