@@ -18,13 +18,12 @@ object GlobalViewModelProvider : ThreadViewModelProvider {
         ViewModelProviderManager.addProvider(this)
     }
 
-    // This will be used within authentication part
     fun init(user: User): GlobalViewModel {
         synchronized(this) {
             if (instance == null) {
                 instance = GlobalViewModel()
-                instance!!.init(user)
             }
+            instance!!.init(user)
             return instance!!
         }
     }

@@ -3,6 +3,7 @@ package com.example.thread.data.viewmodel
 import com.example.thread.data.model.user.UpdateProfileRequest
 import com.example.thread.data.model.user.UserResponse
 import com.example.thread.data.repository.user.UserRepository
+import com.example.thread.ui.screen.GlobalViewModelProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -70,6 +71,23 @@ class UserData(private val userId: Int) {
                 bio = editedBio.value.text
             )
             userRepository.updateUserProfile(requestBody)
+            GlobalViewModelProvider.init(data.value!!.user)
+        }
+    }
+
+    fun updateUserImage(imageFile: ByteArray) {
+        CoroutineScope(Dispatchers.IO).launch {
+            userRepository.updateUserImage(imageFile)
+            retrieveUserData()
+            GlobalViewModelProvider.init(data.value!!.user)
+        }
+    }
+
+    fun removeUserImage() {
+        CoroutineScope(Dispatchers.IO).launch {
+            userRepository.removeUserImage()
+            retrieveUserData()
+            GlobalViewModelProvider.init(data.value!!.user)
         }
     }
 

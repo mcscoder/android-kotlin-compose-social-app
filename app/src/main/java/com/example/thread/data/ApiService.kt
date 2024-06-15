@@ -2,6 +2,7 @@ package com.example.thread.data
 
 import com.example.thread.data.model.activity.FollowActivity
 import com.example.thread.data.model.activity.ReplyActivity
+import com.example.thread.data.model.common.ImageUrl
 import com.example.thread.data.model.response.ResponseMessage
 import com.example.thread.data.model.thread.MainThreadWithRepliesResponse
 import com.example.thread.data.model.thread.ThreadResponse
@@ -32,7 +33,7 @@ interface ApiService {
 
     @Multipart
     @POST("upload/images")
-    fun uploadImages(@Part images: List<MultipartBody.Part>): Call<List<String>>
+    suspend fun uploadImages(@Part images: List<MultipartBody.Part>): Response<List<String>>
 
     @GET("code/get")
     suspend fun getConfirmationCode(@Header("email") email: String): Response<Unit>
@@ -91,7 +92,13 @@ interface ApiService {
     // 1.8. Update User image
     @PATCH("user/profile/image")
     suspend fun updateUserImage(
-        @Body imageUrl: String,
+        @Body imageUrl: ImageUrl,
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Response<Unit>
+
+    // 1.9. Remove current current User image
+    @DELETE("user/profile/image")
+    suspend fun removeUserImage(
         @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Response<Unit>
 

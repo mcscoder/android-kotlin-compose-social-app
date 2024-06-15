@@ -26,7 +26,7 @@ class ThreadRepository(
     }
 
     // 2.3. Post a Thread
-    fun postThread(text: String, type: Int, imageFiles: List<ByteArray>, mainId: Int? = null) {
+    suspend fun postThread(text: String, type: Int, imageFiles: List<ByteArray>, mainId: Int? = null) {
         var requestBody = ThreadRequest(text, type, emptyList(), mainId)
         if (imageFiles.isNotEmpty()) {
             val imageUrls = resourceRepository.uploadImages(imageFiles)

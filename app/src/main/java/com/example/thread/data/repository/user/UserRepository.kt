@@ -1,13 +1,16 @@
 package com.example.thread.data.repository.user
 
+import android.util.Log
 import com.example.thread.data.ApiService
 import com.example.thread.data.RetrofitInstance
 import com.example.thread.data.model.activity.FollowActivity
+import com.example.thread.data.model.common.ImageUrl
 import com.example.thread.data.model.user.ActivityFollowResponse
 import com.example.thread.data.model.user.UpdateProfileRequest
 import com.example.thread.data.model.user.UserLoginRequest
 import com.example.thread.data.model.user.UserRegisterRequest
 import com.example.thread.data.model.user.UserResponse
+import com.example.thread.data.repository.resource.ResourceRepository
 import com.example.thread.ui.screen.GlobalViewModelProvider
 import retrofit2.Response
 import retrofit2.http.Body
@@ -17,6 +20,7 @@ import retrofit2.http.POST
 
 class UserRepository(
     private val apiService: ApiService = RetrofitInstance.apiService,
+    private val resourceRepository: ResourceRepository = ResourceRepository(),
 ) {
     // 1.1. Get User by `userId`
     fun getUser(targetUserId: Int = 1): UserResponse? {
@@ -54,7 +58,13 @@ class UserRepository(
     }
 
     // 1.8. Update User image
-    suspend fun updateUserImage(imageUrl: String): Boolean {
-        return apiService.updateUserImage(imageUrl).isSuccessful
+    suspend fun updateUserImage(imageFile: ByteArray): Boolean {
+        val imageUrls = resourceRepository.uploadImages(listOf(imageFile))
+        return apiService.updateUserImage(ImageUrl(imageUrls[0])).isSuccessful
+    }
+
+    // 1.9 Remove current User image
+    suspend fun removeUserImage(): Boolean {
+        return apiService.removeUserImage().isSuccessful
     }
 }

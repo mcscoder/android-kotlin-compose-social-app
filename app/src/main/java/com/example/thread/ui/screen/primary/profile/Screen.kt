@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,6 +44,7 @@ import com.example.thread.ui.component.button.IconClickable
 import com.example.thread.ui.component.button.TitleDescription
 import com.example.thread.ui.component.common.ConfirmationAlert
 import com.example.thread.ui.component.common.Spacer
+import com.example.thread.ui.component.common.rememberSingleImagePicker
 import com.example.thread.ui.component.feed.FeedCard
 import com.example.thread.ui.component.input.TextField
 import com.example.thread.ui.component.layout.BottomSheet
@@ -52,6 +54,7 @@ import com.example.thread.ui.component.layout.lazyThreadDetailsCard
 import com.example.thread.ui.component.navigation.ThreadTopBar
 import com.example.thread.ui.component.scaffold.ThreadScaffold
 import com.example.thread.ui.component.text.TextBody
+import com.example.thread.ui.component.text.TextCallOut
 import com.example.thread.ui.component.text.TextHeadLine
 import com.example.thread.ui.component.user.UserAvatar
 import com.example.thread.ui.navigation.ThreadNavController
@@ -112,14 +115,6 @@ fun ProfileHeader(
                 ) {
                     TextBody(text = "Edit profile", bold = true)
                 }
-                Button(
-                    onClick = { /*TODO*/ },
-                    rounded = false,
-                    modifier = Modifier.weight(1f),
-                    buttonVariant = ButtonVariant.OUTLINED
-                ) {
-                    TextBody(text = "Share profile", bold = true)
-                }
             } else {
                 Button(
                     onClick = {
@@ -134,14 +129,6 @@ fun ProfileHeader(
                         color = if (user.overview.follow.isFollowing) Color.Black else Color.White,
                         bold = true
                     )
-                }
-                Button(
-                    onClick = { /*TODO*/ },
-                    rounded = false,
-                    modifier = Modifier.weight(1f),
-                    buttonVariant = ButtonVariant.OUTLINED
-                ) {
-                    TextBody(text = "Mention", bold = true)
                 }
             }
         }
@@ -410,7 +397,35 @@ fun EditProfileScreen(
         display = displayAvatarOptions,
         onDismiss = { displayAvatarOptions = false }
     ) {
-        TextBody(text = "That worked")
+        val imagePicker = rememberSingleImagePicker { viewModel.userData.updateUserImage(it) }
+
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 16.dp)
+        ) {
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { imagePicker() },
+                buttonVariant = ButtonVariant.FILLED,
+                rounded = false,
+                paddingValues = PaddingValues(16.dp)
+            ) {
+                TextCallOut(text = "Choose from library", color = Color.White)
+            }
+            Spacer(height = 8.dp)
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    viewModel.userData.removeUserImage()
+                },
+                buttonVariant = ButtonVariant.OUTLINED,
+                rounded = false,
+                paddingValues = PaddingValues(16.dp)
+            ) {
+                TextCallOut(text = "Remove current picture", color = Color.Red)
+            }
+        }
     }
 
     EditBioScreen(
