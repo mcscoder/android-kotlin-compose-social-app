@@ -34,7 +34,7 @@ import okhttp3.Dispatcher
 
 @Composable
 fun FeedCard(
-    threadNavController: ThreadNavController,
+    threadNavController: ThreadNavController?,
     threadData: ThreadResponse,
     onFeedCardClick: () -> Unit = {},
     onFavoriteClick: (isFavorite: Boolean) -> Unit = {},
@@ -65,7 +65,7 @@ fun FeedCard(
                         avatarURL = threadData.user.user.imageUrl,
                         isFollowed = threadData.user.overview.follow.isFollowing ||
                                 threadData.user.user.userId == GlobalViewModelProvider.getCurrentUserId(),
-                        onClick = { threadNavController.navigateToUserProfile(threadData.user.user.userId) }
+                        onClick = { threadNavController?.navigateToUserProfile(threadData.user.user.userId) }
                     )
                     if (showVerticalDivider) {
                         ThreadVerticalDivider()
@@ -76,7 +76,7 @@ fun FeedCard(
                         // User name
                         UsernameClickable(
                             username = threadData.user.user.username,
-                            onClick = { threadNavController.navigateToUserProfile(threadData.user.user.userId) }
+                            onClick = { threadNavController?.navigateToUserProfile(threadData.user.user.userId) }
                         )
                         // Post time (ago)
                         TextDateTime(timeStamp = threadData.content.dateTime.createdAt)

@@ -129,7 +129,6 @@ fun ScaffoldBottomSheet(
 fun NewThreadBottomSheet(
     modifier: Modifier = Modifier,
     viewModel: NewThreadViewModel,
-    threadNavController: ThreadNavController,
     sheetState: SheetState = rememberModalBottomSheetState(true),
     display: MutableState<Boolean>,
     title: String,
@@ -165,7 +164,7 @@ fun NewThreadBottomSheet(
             item {
                 if (mainThread != null) {
                     FeedCard(
-                        threadNavController = threadNavController,
+                        threadNavController = null,
                         threadData = mainThread,
                         showActionButton = false,
                         showVerticalDivider = true

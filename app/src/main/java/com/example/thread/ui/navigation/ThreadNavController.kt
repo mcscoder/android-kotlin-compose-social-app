@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.Stable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
+import com.example.thread.data.viewmodel.threaddata.ThreadData
 import com.example.thread.data.viewmodel.threaddata.ThreadsData
 import com.example.thread.ui.navigation.myprofile.MyProfileDestination
 import com.example.thread.ui.navigation.profile.ProfileDestination
@@ -52,9 +53,11 @@ class ThreadNavController(val navController: NavHostController) {
     }
 
     fun navigateToReplyToThread(threadsData: ThreadsData, threadIndex: Int) {
-        val threadsDataIndex = ThreadDetailsData.setThreadsData(threadsData)
-        val mainThreadType = threadsData.data.value[threadIndex].content.type
-        navigate("${ThreadDestination.REPLY_TO_THREAD.route}/${threadsDataIndex}/${threadIndex}/${mainThreadType}")
+        GlobalViewModelProvider.displayReplyThreadScreen(threadsData, threadIndex)
+
+        // val threadsDataIndex = ThreadDetailsData.setThreadsData(threadsData)
+        // val mainThreadType = threadsData.data.value[threadIndex].content.type
+        // navigate("${ThreadDestination.REPLY_TO_THREAD.route}/${threadsDataIndex}/${threadIndex}/${mainThreadType}")
     }
 
     fun navigateUp() {

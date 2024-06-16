@@ -1,9 +1,12 @@
 package com.example.thread.ui.screen
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.thread.data.model.user.User
 import com.example.thread.data.repository.user.UserRepository
+import com.example.thread.data.viewmodel.threaddata.ThreadData
+import com.example.thread.data.viewmodel.threaddata.ThreadsData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,8 +17,17 @@ import kotlinx.coroutines.launch
 object GlobalViewModelProvider : ThreadViewModelProvider {
     private var instance: GlobalViewModel? = null
 
+    val displayNewThread = mutableStateOf(false)
+    val displayReplyThread = mutableStateOf(false)
+    val threadData = mutableStateOf<ThreadData?>(null)
+
     init {
         ViewModelProviderManager.addProvider(this)
+    }
+
+    fun displayReplyThreadScreen(threadsData: ThreadsData, threadIndex: Int) {
+        threadData.value = ThreadData(threadsData, threadIndex)
+        displayReplyThread.value = true
     }
 
     fun init(user: User): GlobalViewModel {

@@ -147,3 +147,8 @@ class ThreadsData(threadResponses: List<ThreadResponse> = emptyList()) {
         }
     }
 }
+
+data class ThreadData(
+    val threadsData: ThreadsData,
+    val index: Int,
+)

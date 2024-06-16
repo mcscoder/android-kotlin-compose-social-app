@@ -28,9 +28,11 @@ import com.example.thread.data.model.thread.ThreadResponse
 import com.example.thread.ui.component.common.ConfirmationAlert
 import com.example.thread.ui.component.common.Spacer
 import com.example.thread.ui.component.layout.BottomSheet
+import com.example.thread.ui.component.layout.NewThreadBottomSheet
 import com.example.thread.ui.component.text.TextBody
 import com.example.thread.ui.component.text.TextCallOut
 import com.example.thread.ui.screen.GlobalViewModelProvider
+import com.example.thread.ui.screen.primary.newthread.NewThreadViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,7 +69,9 @@ fun ThreadActionButtons(
                 IconClickable(
                     imageVector = Icons.Outlined.ModeComment,
                     tint = Color.DarkGray,
-                    onClick = { onReplyClick() },
+                    onClick = {
+                        onReplyClick()
+                    },
                     size = iconSize,
                 )
                 TextBody(text = thread.overview.reply.count.toString())
@@ -122,4 +126,23 @@ fun ThreadActionButtons(
             onDeleteConfirmed()
         }
     )
+
+    // Reply Thread
+    // if (displayReplyThread.value) {
+    //     val viewModel = remember {
+    //         NewThreadViewModel()
+    //     }
+    //
+    //     NewThreadBottomSheet(
+    //         viewModel = viewModel,
+    //         display = displayReplyThread,
+    //         title = "Reply",
+    //         mainThread = thread,
+    //         onPostClick = { dismiss ->
+    //             viewModel.postReply(thread.content.type, thread.content.threadId) {
+    //                 dismiss()
+    //             }
+    //         }
+    //     )
+    // }
 }

@@ -55,7 +55,7 @@ class NewThreadViewModel : ViewModel() {
 
     fun postReply(
         mainThreadType: Int,
-        mainId: Int? = null,
+        mainId: Int,
         onResponse: CoroutineScope.() -> Unit = {},
     ) {
         var type: ThreadType = ThreadType.COMMENT
