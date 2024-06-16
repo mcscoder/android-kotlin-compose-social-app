@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,12 +26,16 @@ import com.example.thread.ui.theme.ThreadTheme
 @Composable
 fun NewThreadScreen(
     threadNavController: ThreadNavController,
-    viewModel: NewThreadViewModel,
+    viewModel: NewThreadViewModel = viewModel(),
     topBarTitle: String = "New Thread",
     onPostClick: () -> Unit = { viewModel.postThread() },
     onNavigateUp: () -> Unit = {},
     mainThread: ThreadResponse? = null,
 ) {
+    val postButtonDisable = remember {
+        mutableStateOf(false)
+    }
+
     ThreadScaffold(
         modifier = Modifier.imePadding(),
         topBar = {
@@ -39,8 +44,11 @@ fun NewThreadScreen(
                 title = topBarTitle,
                 actions = {
                     Button(
-                        onClick = onPostClick,
-                        disable = viewModel.textContent.text.isEmpty()
+                        onClick = {
+                            postButtonDisable.value = true
+                            onPostClick()
+                        },
+                        disable = viewModel.textContent.text.isEmpty() || postButtonDisable.value
                     ) {
                         TextBody(text = "Post", color = Color.White, bold = true)
                     }
@@ -49,9 +57,6 @@ fun NewThreadScreen(
                 onNavigateUp = onNavigateUp
             )
         },
-        bottomBar = {
-            // TextBody(text = "Are you sure bro?")
-        }
     ) { paddingValues ->
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
             item {
@@ -86,7 +91,7 @@ fun ReplyToThreadScreen(
     if (threadsData != null) {
         val thread = threadsData.data.collectAsState().value[threadIndex]
         val viewModel = remember {
-            NewThreadViewModel(threadNavController)
+            NewThreadViewModel()
         }
         NewThreadScreen(
             threadNavController = threadNavController,

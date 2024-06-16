@@ -28,7 +28,7 @@ enum class ButtonVariant {
 @Composable
 fun Button(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)?,
     buttonVariant: ButtonVariant = ButtonVariant.FILLED,
     paddingValues: PaddingValues = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
     shape: Shape = RoundedCornerShape(8.dp),
@@ -59,9 +59,14 @@ fun Button(
         }
     }
 
-    Row(modifier = modifier
-        .clickable { onClick() }
-        .padding(paddingValues),
+    if (onClick != null) {
+        modifier = modifier.clickable(!disable) {
+            onClick()
+        }
+    }
+
+    Row(
+        modifier = modifier.padding(paddingValues),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {

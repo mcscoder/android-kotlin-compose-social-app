@@ -94,10 +94,6 @@ fun FeedCard(
                             ableToReply = ableToReply,
                             onDeleteConfirmed = {
                                 onDeleteConfirmed()
-                                // CoroutineScope(Dispatchers.IO).launch {
-                                //     ThreadRepository().deleteThreadById(threadData.content.threadId)
-                                //     onDeleteConfirmed()
-                                // }
                             },
                             onSaveThreadClick = {
                                 onSaveThreadClick()

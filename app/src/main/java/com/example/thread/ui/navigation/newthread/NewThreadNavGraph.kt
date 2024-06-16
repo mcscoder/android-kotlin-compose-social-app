@@ -10,7 +10,6 @@ import com.example.thread.ui.navigation.ThreadNavController
 import com.example.thread.ui.navigation.ThreadNavigationItem
 import com.example.thread.ui.navigation.getNavRoute
 import com.example.thread.ui.screen.primary.newthread.NewThreadScreen
-import com.example.thread.ui.screen.primary.newthread.NewThreadViewModelProvider
 
 enum class NewThreadDestination(val route: String) {
     START_DESTINATION(getNavRoute(NavigationType.SECONDARY, ThreadNavigationItem.NEW_THREAD.route))
@@ -26,8 +25,7 @@ fun NavGraphBuilder.newThreadNavGraph(threadNavController: ThreadNavController) 
             enterTransition = { bottomToTopSlideInAnimation() },
             exitTransition = { topToBottomSlideOutAnimation() }
         ) {
-            val newThreadViewModel = NewThreadViewModelProvider.getInstance(threadNavController)
-            NewThreadScreen(threadNavController, newThreadViewModel)
+            NewThreadScreen(threadNavController)
         }
     }
 }

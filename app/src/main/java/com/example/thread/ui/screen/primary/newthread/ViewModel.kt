@@ -13,16 +13,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object NewThreadViewModelProvider {
-    fun getInstance(threadNavController: ThreadNavController): NewThreadViewModel {
-        return NewThreadViewModel(threadNavController)
-    }
-}
+class NewThreadViewModel : ViewModel() {
+    private val threadRepository: ThreadRepository = ThreadRepository()
 
-class NewThreadViewModel(
-    private val threadNavController: ThreadNavController,
-    private val threadRepository: ThreadRepository = ThreadRepository(),
-) : ViewModel() {
     var textContent by mutableStateOf(TextFieldValue())
         private set
     var imageFiles by mutableStateOf<List<ByteArray>>(emptyList())
@@ -55,9 +48,6 @@ class NewThreadViewModel(
                     imageFiles = imageFiles,
                     mainId = mainId
                 )
-                launch(context = Dispatchers.Main) {
-                    threadNavController.navigateUp()
-                }
                 onResponse()
             }
         }
