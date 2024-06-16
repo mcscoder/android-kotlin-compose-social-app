@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.thread.data.model.thread.ThreadType
 import com.example.thread.data.repository.thread.ThreadRepository
 import com.example.thread.ui.navigation.ThreadNavController
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -41,7 +42,11 @@ class NewThreadViewModel(
         imageFiles = newImageFiles
     }
 
-    fun postThread(threadType: ThreadType = ThreadType.POST, mainId: Int? = null) {
+    fun postThread(
+        threadType: ThreadType = ThreadType.POST,
+        mainId: Int? = null,
+        onResponse: CoroutineScope.() -> Unit = {},
+    ) {
         viewModelScope.launch(context = Dispatchers.IO) {
             if (textContent.text.isNotEmpty()) {
                 threadRepository.postThread(
@@ -53,15 +58,22 @@ class NewThreadViewModel(
                 launch(context = Dispatchers.Main) {
                     threadNavController.navigateUp()
                 }
+                onResponse()
             }
         }
     }
 
-    fun postReply(mainThreadType: Int, mainId: Int? = null) {
+    fun postReply(
+        mainThreadType: Int,
+        mainId: Int? = null,
+        onResponse: CoroutineScope.() -> Unit = {},
+    ) {
         var type: ThreadType = ThreadType.COMMENT
         when (mainThreadType) {
             ThreadType.COMMENT.ordinal -> type = ThreadType.REPLY
         }
-        postThread(type, mainId)
+        postThread(type, mainId) {
+            onResponse()
+        }
     }
 }

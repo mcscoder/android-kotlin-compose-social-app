@@ -26,7 +26,7 @@ fun LazyThreadDetailsLayout(
     ableToReplyToReply: Boolean = true,
 
     thread: ThreadResponse,
-    threadReplies: List<ThreadResponse>
+    threadReplies: List<ThreadResponse>,
 ) {
     LazyColumn(modifier = modifier) {
         lazyThreadDetailsCard(
@@ -83,6 +83,8 @@ fun LazyListScope.lazyThreadDetailsCard(
             onFeedCardClick = {
                 onReplyCardClick(index)
             },
+            onSaveThreadClick = {},
+            onDeleteConfirmed = {},
             showVerticalDivider = true,
             ableToReply = ableToReplyToReply,
             showHorizontalDivider = !showBottomDivider

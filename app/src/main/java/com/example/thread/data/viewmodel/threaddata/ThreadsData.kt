@@ -39,6 +39,33 @@ class ThreadsData(threadResponses: List<ThreadResponse> = emptyList()) {
         _data.update { responses }
     }
 
+    fun updateAt(index: Int) {
+        val threadId = data.value[index].content.threadId
+        CoroutineScope(Dispatchers.IO).launch {
+            val thread = threadRepository.getThread(threadId)
+            if (thread != null) {
+                _data.update { data ->
+                    val updatedData = data.toMutableList()
+                    updatedData[index] = thread
+
+                    updatedData
+                }
+            }
+        }
+    }
+
+    fun removeAt(index: Int) {
+        val threadId = data.value[index].content.threadId
+        _data.update { data ->
+            val updatedData = data.toMutableList()
+            updatedData.removeAt(index)
+            updatedData
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            threadRepository.deleteThreadById(threadId)
+        }
+    }
+
     fun getRandomThreads(reload: Boolean = false) {
         CoroutineScope(Dispatchers.IO).launch {
             val threadResponses = threadRepository.getRandomThreads()
@@ -95,6 +122,28 @@ class ThreadsData(threadResponses: List<ThreadResponse> = emptyList()) {
         CoroutineScope(Dispatchers.IO).launch {
             val threads = threadRepository.getThreadsByText(text)
             _data.update { threads }
+        }
+    }
+
+    fun getSavedThreads() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val threads = threadRepository.getSavedThreads()
+            _data.update { threads }
+        }
+    }
+
+    fun getFavoritedThreads() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val threads = threadRepository.getFavoritedThreads()
+            _data.update { threads }
+        }
+    }
+
+    fun saveThread(itemIndex: Int, onResponse: CoroutineScope.() -> Unit = {}) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val threadId = data.value[itemIndex].content.threadId
+            threadRepository.saveThreadById(threadId)
+            onResponse()
         }
     }
 }

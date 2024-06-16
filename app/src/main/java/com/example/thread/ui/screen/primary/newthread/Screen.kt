@@ -82,23 +82,27 @@ fun ReplyToThreadScreen(
     threadIndex: Int,
     threadType: Int,
 ) {
-    val thread =
-        ThreadDetailsData.getThreadsData(threadsDataIndex)!!.data.collectAsState().value[threadIndex]
-    val viewModel = remember {
-        NewThreadViewModel(threadNavController)
-    }
-    NewThreadScreen(
-        threadNavController = threadNavController,
-        viewModel = viewModel,
-        topBarTitle = "Reply",
-        mainThread = thread,
-        onPostClick = {
-            viewModel.postReply(threadType, thread.content.threadId)
-        },
-        onNavigateUp = {
-            ThreadDetailsData.removeThreadsDataAt(threadsDataIndex)
+    val threadsData = ThreadDetailsData.getThreadsData(threadsDataIndex)
+    if (threadsData != null) {
+        val thread = threadsData.data.collectAsState().value[threadIndex]
+        val viewModel = remember {
+            NewThreadViewModel(threadNavController)
         }
-    )
+        NewThreadScreen(
+            threadNavController = threadNavController,
+            viewModel = viewModel,
+            topBarTitle = "Reply",
+            mainThread = thread,
+            onPostClick = {
+                viewModel.postReply(threadType, thread.content.threadId) {
+                    threadsData.updateAt(threadIndex)
+                }
+            },
+            onNavigateUp = {
+                ThreadDetailsData.removeThreadsDataAt(threadsDataIndex)
+            }
+        )
+    }
 }
 
 @Preview(showBackground = true, showSystemUi = true)

@@ -18,7 +18,7 @@ fun TextBody(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Black,
-    fontSize: TextUnit = 14.sp,
+    fontSize: TextUnit = 15.sp,
     fontStyle: FontStyle? = FontStyle.Normal,
     fontWeight: FontWeight? = FontWeight.W400,
     letterSpacing: TextUnit = TextUnit.Unspecified,

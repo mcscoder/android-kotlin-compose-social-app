@@ -21,7 +21,8 @@ import com.example.thread.ui.component.text.TextBody
 
 enum class ButtonVariant {
     FILLED,
-    OUTLINED
+    OUTLINED,
+    TEXT
 }
 
 @Composable
@@ -50,6 +51,11 @@ fun Button(
                 .border(
                     1.dp, Color.LightGray, if (rounded) CircleShape else RoundedCornerShape(8.dp)
                 )
+        }
+
+        ButtonVariant.TEXT -> {
+            modifier = modifier
+                .background(Color.Transparent)
         }
     }
 

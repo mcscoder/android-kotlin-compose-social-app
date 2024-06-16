@@ -8,11 +8,7 @@ class ThreadDetailsViewModel(val threadsData: ThreadsData, val threadIndex: Int)
     val repliesData = ThreadsData()
     private val mainPostData = threadsData.data.value[threadIndex]
 
-    init {
-        getReplies()
-    }
-
-    private fun getReplies() {
+    fun getReplies() {
         repliesData.getReplies(mainPostData.content.threadId)
     }
 }

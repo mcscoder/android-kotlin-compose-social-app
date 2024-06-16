@@ -47,7 +47,8 @@ fun SearchScreen(threadNavController: ThreadNavController) {
     }
 
     val userPreferences = UserPreferences(LocalContext.current)
-    val searchHistory = userPreferences.searchHistory.collectAsState(initial = emptyList()).value.reversed()
+    val searchHistory =
+        userPreferences.searchHistory.collectAsState(initial = emptyList()).value.reversed()
 
 
     PullRefreshLayout(onRefresh = { /*TODO*/ }) {
@@ -131,12 +132,15 @@ fun SearchResultsScreen(threadNavController: ThreadNavController, searchText: St
                     .pullRefresh(pullRefreshState)
                     .fillMaxSize(),
             ) {
-                itemsIndexed(items = threads) {index, thread ->
+                itemsIndexed(items = threads) { index, thread ->
                     FeedCard(
                         threadNavController = threadNavController,
                         threadData = thread,
                         onFeedCardClick = {
-                            threadNavController.navigateToThreadDetails(viewModel.threadsData, index)
+                            threadNavController.navigateToThreadDetails(
+                                viewModel.threadsData,
+                                index
+                            )
                         },
                         onFavoriteClick = { isFavorite ->
                             viewModel.threadsData.favoriteThread(
@@ -149,6 +153,12 @@ fun SearchResultsScreen(threadNavController: ThreadNavController, searchText: St
                                 viewModel.threadsData,
                                 index,
                             )
+                        },
+                        onSaveThreadClick = {
+                            viewModel.threadsData.saveThread(index)
+                        },
+                        onDeleteConfirmed = {
+                            viewModel.threadsData.removeAt(index)
                         }
                     )
                 }

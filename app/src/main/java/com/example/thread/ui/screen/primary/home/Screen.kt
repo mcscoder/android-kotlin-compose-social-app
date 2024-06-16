@@ -32,7 +32,9 @@ fun HomeScreen(
             viewModel.threadsData.getRandomThreads(true)
         }) { pullRefreshState ->
             InfiniteScrollLayout(
-                modifier = Modifier.pullRefresh(pullRefreshState).fillMaxSize(),
+                modifier = Modifier
+                    .pullRefresh(pullRefreshState)
+                    .fillMaxSize(),
                 onReachedLastVisibleItem = {
                     viewModel.threadsData.getRandomThreads()
                 }
@@ -42,7 +44,10 @@ fun HomeScreen(
                         threadNavController = threadNavController,
                         threadData = thread,
                         onFeedCardClick = {
-                            threadNavController.navigateToThreadDetails(viewModel.threadsData, index)
+                            threadNavController.navigateToThreadDetails(
+                                viewModel.threadsData,
+                                index
+                            )
                         },
                         onFavoriteClick = { isFavorite ->
                             viewModel.threadsData.favoriteThread(
@@ -55,6 +60,12 @@ fun HomeScreen(
                                 viewModel.threadsData,
                                 index,
                             )
+                        },
+                        onDeleteConfirmed = {
+                            viewModel.threadsData.removeAt(index)
+                        },
+                        onSaveThreadClick = {
+                            viewModel.threadsData.saveThread(index)
                         }
                     )
                 }

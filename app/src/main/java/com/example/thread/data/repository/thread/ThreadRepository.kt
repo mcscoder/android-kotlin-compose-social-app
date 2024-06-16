@@ -10,6 +10,11 @@ import com.example.thread.data.model.thread.ThreadResponse
 import com.example.thread.data.model.user.UserReplies
 import com.example.thread.data.repository.resource.ResourceRepository
 import com.example.thread.ui.screen.GlobalViewModelProvider
+import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 class ThreadRepository(
     private val apiService: ApiService = RetrofitInstance.apiService,
@@ -26,7 +31,12 @@ class ThreadRepository(
     }
 
     // 2.3. Post a Thread
-    suspend fun postThread(text: String, type: Int, imageFiles: List<ByteArray>, mainId: Int? = null) {
+    suspend fun postThread(
+        text: String,
+        type: Int,
+        imageFiles: List<ByteArray>,
+        mainId: Int? = null,
+    ) {
         var requestBody = ThreadRequest(text, type, emptyList(), mainId)
         if (imageFiles.isNotEmpty()) {
             val imageUrls = resourceRepository.uploadImages(imageFiles)
@@ -68,6 +78,21 @@ class ThreadRepository(
     // 2.10. Delete a Thread by id
     suspend fun deleteThreadById(threadId: Int) {
         apiService.deleteThreadById(threadId)
+    }
+
+    // 2.11. Save or unsave a Thread
+    suspend fun saveThreadById(threadId: Int) {
+        apiService.saveThreadById(threadId)
+    }
+
+    // 2.12. Get saved Threads
+    suspend fun getSavedThreads(): List<ThreadResponse> {
+        return apiService.getSavedThreads().body()!!
+    }
+
+    // 2.13. Get favorited Threads
+    suspend fun getFavoritedThreads(): List<ThreadResponse> {
+        return apiService.getFavoritedThreads().body()!!
     }
 
     // ---------------------------------------------------------- below is for testing

@@ -28,7 +28,7 @@ fun ThreadTopBar(
     actions: @Composable RowScope.() -> Unit = {},
     onNavigateUp: () -> Unit = {},
     showDivider: Boolean = true,
-    showBackButton: Boolean = true
+    showBackButton: Boolean = true,
 ) {
     Column(modifier = modifier) {
         Row(

@@ -19,6 +19,7 @@ import com.example.thread.data.repository.thread.ThreadRepository
 import com.example.thread.ui.component.button.ThreadActionButtons
 import com.example.thread.ui.component.common.ThreadHorizontalDivider
 import com.example.thread.ui.component.common.ThreadVerticalDivider
+import com.example.thread.ui.component.common.rememberToast
 import com.example.thread.ui.component.image.FeedCardImageRow
 import com.example.thread.ui.component.text.TextBody
 import com.example.thread.ui.component.text.TextDateTime
@@ -39,11 +40,14 @@ fun FeedCard(
     onFavoriteClick: (isFavorite: Boolean) -> Unit = {},
     onReplyClick: () -> Unit = {},
     onDeleteConfirmed: () -> Unit = {},
+    onSaveThreadClick: () -> Unit = {},
     ableToReply: Boolean = true,
     showActionButton: Boolean = true,
     showVerticalDivider: Boolean = false,
     showHorizontalDivider: Boolean = true,
 ) {
+    val toast = rememberToast()
+
     // Navigate to ThreadPostDetails by clicking to the FeedCard
     Box(modifier = Modifier.clickable { onFeedCardClick() }) {
         Column {
@@ -89,10 +93,15 @@ fun FeedCard(
                             thread = threadData,
                             ableToReply = ableToReply,
                             onDeleteConfirmed = {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    ThreadRepository().deleteThreadById(threadData.content.threadId)
-                                    onDeleteConfirmed()
-                                }
+                                onDeleteConfirmed()
+                                // CoroutineScope(Dispatchers.IO).launch {
+                                //     ThreadRepository().deleteThreadById(threadData.content.threadId)
+                                //     onDeleteConfirmed()
+                                // }
+                            },
+                            onSaveThreadClick = {
+                                onSaveThreadClick()
+                                toast("Saved")
                             }
                         )
                     }

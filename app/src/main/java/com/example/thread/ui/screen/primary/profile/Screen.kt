@@ -257,11 +257,11 @@ fun ProfileScreen(
                                         index
                                     )
                                 },
+                                onSaveThreadClick = {
+                                    viewModel.threadsData.saveThread(index)
+                                },
                                 onDeleteConfirmed = {
-                                    viewModel.threadsData.getThreadsByUserId(
-                                        targetUserId,
-                                        ThreadType.POST.ordinal
-                                    )
+                                    viewModel.threadsData.removeAt(index)
                                 }
                             )
                         }

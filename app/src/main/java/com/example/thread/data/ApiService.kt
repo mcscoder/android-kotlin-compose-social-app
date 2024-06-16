@@ -180,6 +180,25 @@ interface ApiService {
         // @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Response<Unit>
 
+    // 2.11. Save or unsave a Thread
+    @POST("thread/save/{threadId}")
+    suspend fun saveThreadById(
+        @Path("threadId") threadId: Int,
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Response<Unit>
+
+    // 2.12. Get saved Threads
+    @GET("threads/saved")
+    suspend fun getSavedThreads(
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Response<List<ThreadResponse>>
+
+    // 2.13. Get favorited Threads
+    @GET("threads/favorited")
+    suspend fun getFavoritedThreads(
+        @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
+    ): Response<List<ThreadResponse>>
+
     // temp
     @GET("thread/replying/reply/{threadReplyId}")
     fun getThreadReplyingReplies(

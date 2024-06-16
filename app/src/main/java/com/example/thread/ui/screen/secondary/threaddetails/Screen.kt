@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.NotificationsNone
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -27,6 +28,10 @@ fun ThreadDetailsScreen(
 
     val mainThread = viewModel.threadsData.data.collectAsState().value[viewModel.threadIndex]
     val replies = viewModel.repliesData.data.collectAsState().value
+
+    LaunchedEffect(null) {
+        viewModel.getReplies()
+    }
 
     ThreadScaffold(
         topBar = {

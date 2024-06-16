@@ -76,7 +76,7 @@ fun ScaffoldBottomSheet(
             bold = true,
         )
     },
-    onCancel: (dismiss: () -> Unit) -> Unit,
+    onCancel: (dismiss: () -> Unit) -> Unit = { it() },
     onDone: (dismiss: () -> Unit) -> Unit,
     content: @Composable ColumnScope.(paddingValues: PaddingValues, dismiss: () -> Unit) -> Unit,
 ) {

@@ -30,6 +30,7 @@ import com.example.thread.ui.component.common.Spacer
 import com.example.thread.ui.component.layout.BottomSheet
 import com.example.thread.ui.component.text.TextBody
 import com.example.thread.ui.component.text.TextCallOut
+import com.example.thread.ui.screen.GlobalViewModelProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,7 +38,8 @@ fun ThreadActionButtons(
     thread: ThreadResponse,
     onFavoriteClick: (isFavorite: Boolean) -> Unit,
     onReplyClick: () -> Unit,
-    onDeleteConfirmed: () -> Unit,
+    onDeleteConfirmed: () -> Unit = {},
+    onSaveThreadClick: () -> Unit = {},
     ableToReply: Boolean = true,
     iconSize: Dp = 19.dp,
 ) {
@@ -84,14 +86,29 @@ fun ThreadActionButtons(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    displayDeleteAlert.value = true
+                    onSaveThreadClick()
                     dismiss()
                 },
-                buttonVariant = ButtonVariant.OUTLINED,
+                buttonVariant = ButtonVariant.FILLED,
                 rounded = false,
                 paddingValues = PaddingValues(16.dp)
             ) {
-                TextCallOut(text = "Delete", color = Color.Red)
+                TextCallOut(text = "Save", color = Color.White)
+            }
+            if (thread.user.user.userId == GlobalViewModelProvider.getCurrentUserId()) {
+                Spacer(height = 8.dp)
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        displayDeleteAlert.value = true
+                        dismiss()
+                    },
+                    buttonVariant = ButtonVariant.OUTLINED,
+                    rounded = false,
+                    paddingValues = PaddingValues(16.dp)
+                ) {
+                    TextCallOut(text = "Delete", color = Color.Red)
+                }
             }
         }
     }
