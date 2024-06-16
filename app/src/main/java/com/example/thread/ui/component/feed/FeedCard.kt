@@ -41,6 +41,7 @@ fun FeedCard(
     onReplyClick: () -> Unit = {},
     onDeleteConfirmed: () -> Unit = {},
     onSaveThreadClick: () -> Unit = {},
+    onEditClick: () -> Unit = {},
     ableToReply: Boolean = true,
     showActionButton: Boolean = true,
     showVerticalDivider: Boolean = false,
@@ -98,7 +99,8 @@ fun FeedCard(
                             onSaveThreadClick = {
                                 onSaveThreadClick()
                                 toast("Saved")
-                            }
+                            },
+                            onEditClick = onEditClick
                         )
                     }
                     if (threadData.overview.reply.count > 0 && showActionButton) {

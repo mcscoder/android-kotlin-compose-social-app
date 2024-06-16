@@ -159,6 +159,12 @@ fun SearchResultsScreen(threadNavController: ThreadNavController, searchText: St
                         },
                         onDeleteConfirmed = {
                             viewModel.threadsData.removeAt(index)
+                        },
+                        onEditClick = {
+                            threadNavController.navigateToUpdateThread(
+                                viewModel.threadsData,
+                                index
+                            )
                         }
                     )
                 }

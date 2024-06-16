@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.thread.data.model.thread.ThreadType
 import com.example.thread.data.repository.thread.ThreadRepository
-import com.example.thread.ui.navigation.ThreadNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,8 +20,18 @@ class NewThreadViewModel : ViewModel() {
     var imageFiles by mutableStateOf<List<ByteArray>>(emptyList())
         private set
 
+    var currImageUrls by mutableStateOf<List<String>>(emptyList())
+        private set
+
+    var deletedImageUrls by mutableStateOf<List<String>>(emptyList())
+        private set
+
     fun updateText(newTextContent: TextFieldValue) {
         textContent = newTextContent
+    }
+
+    fun updateText(newTextContent: String) {
+        textContent = TextFieldValue(newTextContent)
     }
 
     fun updateImageFiles(newImageFiles: List<ByteArray>) {
@@ -33,6 +42,22 @@ class NewThreadViewModel : ViewModel() {
         val newImageFiles = imageFiles.toMutableList()
         newImageFiles.removeAt(index)
         imageFiles = newImageFiles
+    }
+
+    fun setImageUrls(newImageUrls: List<String>) {
+        currImageUrls = newImageUrls
+    }
+
+    fun removeImageUrl(index: Int) {
+        // Add removed image url to deleted list
+        val newDeletedImageUrls = deletedImageUrls.toMutableList()
+        newDeletedImageUrls.add(currImageUrls[index])
+        deletedImageUrls = newDeletedImageUrls
+
+        // Remove out of current image url list
+        val newImageUrls = currImageUrls.toMutableList()
+        newImageUrls.removeAt(index)
+        currImageUrls = newImageUrls
     }
 
     fun postThread(
@@ -63,6 +88,13 @@ class NewThreadViewModel : ViewModel() {
             ThreadType.COMMENT.ordinal -> type = ThreadType.REPLY
         }
         postThread(type, mainId) {
+            onResponse()
+        }
+    }
+
+    fun updateThread(threadId: Int, onResponse: CoroutineScope.() -> Unit = {}) {
+        CoroutineScope(Dispatchers.IO).launch {
+            threadRepository.updateThread(threadId, textContent.text, deletedImageUrls, imageFiles)
             onResponse()
         }
     }

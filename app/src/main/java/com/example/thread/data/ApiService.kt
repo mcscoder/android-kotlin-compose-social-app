@@ -7,6 +7,7 @@ import com.example.thread.data.model.response.ResponseMessage
 import com.example.thread.data.model.thread.MainThreadWithRepliesResponse
 import com.example.thread.data.model.thread.ThreadResponse
 import com.example.thread.data.model.thread.ThreadRequest
+import com.example.thread.data.model.thread.UpdateThreadRequest
 import com.example.thread.data.model.user.ActivityFollowResponse
 import com.example.thread.data.model.user.UpdateProfileRequest
 import com.example.thread.data.model.user.UserLoginRequest
@@ -198,6 +199,10 @@ interface ApiService {
     suspend fun getFavoritedThreads(
         @Header("currentUserId") currentUserId: Int = GlobalViewModelProvider.getCurrentUserId(),
     ): Response<List<ThreadResponse>>
+
+    // 2.14. Update a Thread
+    @PATCH("thread/update")
+    suspend fun updateThread(@Body requestBody: UpdateThreadRequest): Response<Unit>
 
     // temp
     @GET("thread/replying/reply/{threadReplyId}")

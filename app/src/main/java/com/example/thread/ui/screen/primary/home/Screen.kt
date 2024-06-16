@@ -66,6 +66,12 @@ fun HomeScreen(
                         },
                         onSaveThreadClick = {
                             viewModel.threadsData.saveThread(index)
+                        },
+                        onEditClick = {
+                            threadNavController.navigateToUpdateThread(
+                                viewModel.threadsData,
+                                index
+                            )
                         }
                     )
                 }

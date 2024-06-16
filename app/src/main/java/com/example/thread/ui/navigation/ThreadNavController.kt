@@ -60,6 +60,10 @@ class ThreadNavController(val navController: NavHostController) {
         // navigate("${ThreadDestination.REPLY_TO_THREAD.route}/${threadsDataIndex}/${threadIndex}/${mainThreadType}")
     }
 
+    fun navigateToUpdateThread(threadsData: ThreadsData, threadIndex: Int) {
+        GlobalViewModelProvider.displayUpdateThreadScreen(threadsData, threadIndex)
+    }
+
     fun navigateUp() {
         navController.popBackStack()
     }

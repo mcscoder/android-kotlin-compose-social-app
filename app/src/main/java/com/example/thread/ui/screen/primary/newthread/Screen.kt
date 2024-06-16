@@ -73,7 +73,7 @@ fun NewThreadScreen(
                     onTextChange = { viewModel.updateText(it) },
                     imageFiles = viewModel.imageFiles,
                     onImageFilesChange = { viewModel.updateImageFiles(it) },
-                    onRemoveImageClick = { viewModel.removeImageFile(it) }
+                    onRemoveImageFileClick = { viewModel.removeImageFile(it) }
                 )
             }
         }

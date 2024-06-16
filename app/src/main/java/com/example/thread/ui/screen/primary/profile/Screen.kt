@@ -262,6 +262,12 @@ fun ProfileScreen(
                                 },
                                 onDeleteConfirmed = {
                                     viewModel.threadsData.removeAt(index)
+                                },
+                                onEditClick = {
+                                    threadNavController.navigateToUpdateThread(
+                                        viewModel.threadsData,
+                                        index
+                                    )
                                 }
                             )
                         }

@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.thread.data.model.thread.ThreadResponse
 import com.example.thread.ui.component.button.Button
 import com.example.thread.ui.component.common.Spacer
@@ -33,7 +32,6 @@ import com.example.thread.ui.component.navigation.ThreadTopBar
 import com.example.thread.ui.component.scaffold.ThreadScaffold
 import com.example.thread.ui.component.text.TextBody
 import com.example.thread.ui.component.text.TextCallOut
-import com.example.thread.ui.navigation.ThreadNavController
 import com.example.thread.ui.screen.primary.newthread.NewThreadViewModel
 import kotlinx.coroutines.launch
 
@@ -146,7 +144,7 @@ fun NewThreadBottomSheet(
         display = display,
         title = title,
         onCancel = onCancel,
-        onDone = {dismiss ->
+        onDone = { dismiss ->
             postButtonDisable.value = true
             onPostClick(dismiss)
         },
@@ -175,7 +173,9 @@ fun NewThreadBottomSheet(
                     onTextChange = { viewModel.updateText(it) },
                     imageFiles = viewModel.imageFiles,
                     onImageFilesChange = { viewModel.updateImageFiles(it) },
-                    onRemoveImageClick = { viewModel.removeImageFile(it) }
+                    onRemoveImageFileClick = { viewModel.removeImageFile(it) },
+                    imageUrls = viewModel.currImageUrls,
+                    onRemoveImageUrlClick = { viewModel.removeImageUrl(it) }
                 )
             }
         }

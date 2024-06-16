@@ -1,5 +1,6 @@
 package com.example.thread.ui.screen
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,6 +20,7 @@ object GlobalViewModelProvider : ThreadViewModelProvider {
 
     val displayNewThread = mutableStateOf(false)
     val displayReplyThread = mutableStateOf(false)
+    val displayUpdateThread = mutableStateOf(false)
     val threadData = mutableStateOf<ThreadData?>(null)
 
     init {
@@ -28,6 +30,12 @@ object GlobalViewModelProvider : ThreadViewModelProvider {
     fun displayReplyThreadScreen(threadsData: ThreadsData, threadIndex: Int) {
         threadData.value = ThreadData(threadsData, threadIndex)
         displayReplyThread.value = true
+    }
+
+    fun displayUpdateThreadScreen(threadsData: ThreadsData, threadIndex: Int) {
+
+        threadData.value = ThreadData(threadsData, threadIndex)
+        displayUpdateThread.value = true
     }
 
     fun init(user: User): GlobalViewModel {

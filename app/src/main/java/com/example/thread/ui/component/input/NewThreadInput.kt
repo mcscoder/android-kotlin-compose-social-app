@@ -1,8 +1,7 @@
 package com.example.thread.ui.component.input
 
 import android.annotation.SuppressLint
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
+import android.util.Log
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,7 +23,8 @@ import androidx.compose.ui.unit.dp
 import com.example.thread.ui.component.button.IconClickable
 import com.example.thread.ui.component.common.ThreadVerticalDivider
 import com.example.thread.ui.component.common.rememberMultipleImagePicker
-import com.example.thread.ui.component.image.ThreadInputImage
+import com.example.thread.ui.component.image.FileImage
+import com.example.thread.ui.component.image.UrlImage
 import com.example.thread.ui.component.user.UserAvatar
 import com.example.thread.ui.component.user.UsernameClickable
 import com.example.thread.ui.screen.GlobalViewModelProvider
@@ -35,11 +35,14 @@ fun NewThreadInput(
     modifier: Modifier = Modifier,
     text: TextFieldValue,
     onTextChange: (TextFieldValue) -> Unit,
+    placeHolder: String = "What's new?",
     imageFiles: List<ByteArray>,
     onImageFilesChange: (List<ByteArray>) -> Unit,
-    onRemoveImageClick: (index: Int) -> Unit,
-    placeHolder: String = "What's new?",
+    onRemoveImageFileClick: (index: Int) -> Unit,
+    imageUrls: List<String> = emptyList(),
+    onRemoveImageUrlClick: (index: Int) -> Unit = {},
 ) {
+
     val user = GlobalViewModelProvider.getInstance().user.collectAsState().value
     val launcher = rememberMultipleImagePicker { onImageFilesChange(it) }
 
@@ -67,14 +70,19 @@ fun NewThreadInput(
                 onValueChange = onTextChange,
                 placeHolder = placeHolder
             )
-            if (imageFiles.isNotEmpty()) {
+            if (imageFiles.isNotEmpty() || imageUrls.isNotEmpty()) {
                 Row(
                     modifier = Modifier
                         .height(300.dp)
                         .horizontalScroll(rememberScrollState())
                 ) {
+                    imageUrls.forEachIndexed { index, imageUrl ->
+                        UrlImage(imageUrl = imageUrl, onRemoveImageClick = {
+                            onRemoveImageUrlClick(index)
+                        })
+                    }
                     imageFiles.forEachIndexed { index, bytes ->
-                        ThreadInputImage(bytes, onRemoveImageClick = { onRemoveImageClick(index) })
+                        FileImage(bytes, onRemoveImageClick = { onRemoveImageFileClick(index) })
                     }
                 }
             }

@@ -1,5 +1,6 @@
 package com.example.thread.ui
 
+import android.util.Log
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.WindowInsets
@@ -130,8 +131,11 @@ fun CommonScreens() {
         )
     }
 
-    LaunchedEffect(GlobalViewModelProvider.displayReplyThread.value) {
-        if (!GlobalViewModelProvider.displayReplyThread.value) {
+    LaunchedEffect(
+        GlobalViewModelProvider.displayReplyThread.value,
+        GlobalViewModelProvider.displayUpdateThread.value
+    ) {
+        if (!GlobalViewModelProvider.displayReplyThread.value && !GlobalViewModelProvider.displayUpdateThread.value) {
             GlobalViewModelProvider.threadData.value = null
         }
     }
@@ -154,6 +158,33 @@ fun CommonScreens() {
             mainThread = thread,
             onPostClick = { dismiss ->
                 viewModel.postReply(thread.content.type, thread.content.threadId) {
+                    dismiss()
+                    threadData.threadsData.updateAt(threadData.index)
+                }
+            }
+        )
+    }
+
+    if (GlobalViewModelProvider.displayUpdateThread.value && GlobalViewModelProvider.threadData.value != null) {
+        val threadData = remember {
+            GlobalViewModelProvider.threadData.value!!
+        }
+
+        val thread = threadData.threadsData.data.collectAsState().value[threadData.index]
+
+        val viewModel = remember {
+            val viewModel = NewThreadViewModel()
+            viewModel.setImageUrls(thread.content.imageUrls)
+            viewModel.updateText(thread.content.text)
+            viewModel
+        }
+
+        NewThreadBottomSheet(
+            viewModel = viewModel,
+            display = GlobalViewModelProvider.displayUpdateThread,
+            title = "Update Thread",
+            onPostClick = { dismiss ->
+                viewModel.updateThread(thread.content.threadId) {
                     dismiss()
                     threadData.threadsData.updateAt(threadData.index)
                 }

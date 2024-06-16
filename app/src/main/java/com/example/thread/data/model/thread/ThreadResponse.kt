@@ -49,3 +49,10 @@ data class MainThreadWithRepliesResponse(
     val main: ThreadResponse,
     val replies: List<ThreadResponse>
 )
+
+data class UpdateThreadRequest(
+    val threadId: Int,
+    val text: String,
+    val deletedImageUrls: List<String>,
+    val newImageUrls: List<String>,
+)

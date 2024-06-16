@@ -7,6 +7,7 @@ import com.example.thread.data.model.response.ResponseMessage
 import com.example.thread.data.model.thread.MainThreadWithRepliesResponse
 import com.example.thread.data.model.thread.ThreadRequest
 import com.example.thread.data.model.thread.ThreadResponse
+import com.example.thread.data.model.thread.UpdateThreadRequest
 import com.example.thread.data.model.user.UserReplies
 import com.example.thread.data.repository.resource.ResourceRepository
 import com.example.thread.ui.screen.GlobalViewModelProvider
@@ -93,6 +94,26 @@ class ThreadRepository(
     // 2.13. Get favorited Threads
     suspend fun getFavoritedThreads(): List<ThreadResponse> {
         return apiService.getFavoritedThreads().body()!!
+    }
+
+    // 1.14. Update a Thread
+    suspend fun updateThread(
+        threadId: Int,
+        text: String,
+        deletedImageUrls: List<String>,
+        imageFiles: List<ByteArray>,
+    ) {
+        var requestBody = UpdateThreadRequest(
+            threadId,
+            text,
+            deletedImageUrls,
+            emptyList()
+        )
+        if (imageFiles.isNotEmpty()) {
+            val imageUrls = resourceRepository.uploadImages(imageFiles)
+            requestBody = requestBody.copy(newImageUrls = imageUrls)
+        }
+        apiService.updateThread(requestBody)
     }
 
     // ---------------------------------------------------------- below is for testing

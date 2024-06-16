@@ -158,7 +158,14 @@ fun BottomSheetThreadsScreen(
                         },
                         onDeleteConfirmed = {
                             threadsData.removeAt(index)
-                        })
+                        },
+                        onEditClick = {
+                            threadNavController.navigateToUpdateThread(
+                                threadsData,
+                                index
+                            )
+                        }
+                    )
                 }
             }
         }

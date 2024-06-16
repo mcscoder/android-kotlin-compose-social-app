@@ -42,6 +42,7 @@ fun ThreadActionButtons(
     onReplyClick: () -> Unit,
     onDeleteConfirmed: () -> Unit = {},
     onSaveThreadClick: () -> Unit = {},
+    onEditClick: () -> Unit = {},
     ableToReply: Boolean = true,
     iconSize: Dp = 19.dp,
 ) {
@@ -104,6 +105,19 @@ fun ThreadActionButtons(
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
+                        onEditClick()
+                        dismiss()
+                    },
+                    buttonVariant = ButtonVariant.OUTLINED,
+                    rounded = false,
+                    paddingValues = PaddingValues(16.dp)
+                ) {
+                    TextCallOut(text = "Edit", color = Color.Black)
+                }
+                Spacer(height = 8.dp)
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
                         displayDeleteAlert.value = true
                         dismiss()
                     },
@@ -126,23 +140,4 @@ fun ThreadActionButtons(
             onDeleteConfirmed()
         }
     )
-
-    // Reply Thread
-    // if (displayReplyThread.value) {
-    //     val viewModel = remember {
-    //         NewThreadViewModel()
-    //     }
-    //
-    //     NewThreadBottomSheet(
-    //         viewModel = viewModel,
-    //         display = displayReplyThread,
-    //         title = "Reply",
-    //         mainThread = thread,
-    //         onPostClick = { dismiss ->
-    //             viewModel.postReply(thread.content.type, thread.content.threadId) {
-    //                 dismiss()
-    //             }
-    //         }
-    //     )
-    // }
 }
