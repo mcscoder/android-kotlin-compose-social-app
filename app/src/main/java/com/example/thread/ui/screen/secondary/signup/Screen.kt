@@ -12,7 +12,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.thread.data.model.common.MessageType
 import com.example.thread.data.repository.user.UserPreferences
 import com.example.thread.ui.component.button.Button
 import com.example.thread.ui.component.common.Spacer
@@ -23,13 +22,16 @@ import com.example.thread.ui.component.layout.SignUpLayout
 import com.example.thread.ui.component.text.TextBody
 import com.example.thread.ui.navigation.ThreadNavController
 import com.example.thread.ui.navigation.login.LoginDestination
-import com.example.thread.ui.screen.ViewModelProviderManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun SignUpScreen(threadNavController: ThreadNavController) {
+fun EnterEmailScreen(
+    threadNavController: ThreadNavController,
+    title: String,
+    onResponse: CoroutineScope.(isExists: Boolean, existAlert: () -> Unit, notExistAlert: () -> Unit) -> Unit,
+) {
     val viewModel = remember {
         SignUpViewModelProvider.getInstance()
     }
@@ -44,7 +46,12 @@ fun SignUpScreen(threadNavController: ThreadNavController) {
         text = "The email address you entered already exists."
     )
 
-    SignUpLayout(threadNavController = threadNavController, title = "Use the Email to Sign Up") {
+    val emailNotExistsAlert = rememberAlertDialog(
+        title = "Email does not exists",
+        text = "The email address you entered does not exists. Please try again."
+    )
+
+    SignUpLayout(threadNavController = threadNavController, title = title) {
         TextField(
             value = viewModel.email.value,
             onValueChange = { viewModel.email.setText(it) },
@@ -60,12 +67,13 @@ fun SignUpScreen(threadNavController: ThreadNavController) {
                             invalidEmailAlert()
                         }
                     ) { isExists ->
-                        if (isExists) {
-                            emailExistsAlert()
-                        } else {
-                            threadNavController.navigate(LoginDestination.CODE_CONFIRMATION.route)
-                            viewModel.getConfirmationCode()
-                        }
+                        onResponse(isExists, emailExistsAlert, emailNotExistsAlert)
+                        // if (isExists) {
+                        //     emailExistsAlert()
+                        // } else {
+                        //     threadNavController.navigate(LoginDestination.SIGN_UP_CODE_CONFIRMATION.route)
+                        //     viewModel.getConfirmationCode()
+                        // }
                     }
                 },
                 rounded = false,
@@ -78,7 +86,7 @@ fun SignUpScreen(threadNavController: ThreadNavController) {
 }
 
 @Composable
-fun CodeConfirmationScreen(threadNavController: ThreadNavController) {
+fun CodeConfirmationScreen(threadNavController: ThreadNavController, onValidCode: () -> Unit) {
     val viewModel = remember {
         SignUpViewModelProvider.getInstance()
     }
@@ -116,7 +124,7 @@ fun CodeConfirmationScreen(threadNavController: ThreadNavController) {
                         if (it) {
                             // Successful
                             CoroutineScope(Dispatchers.Main).launch {
-                                threadNavController.navigate(LoginDestination.NAME_PASSWORD.route)
+                                onValidCode()
                             }
                         } else {
                             // Failed
@@ -213,6 +221,37 @@ fun PickUsername(threadNavController: ThreadNavController) {
                 paddingValues = PaddingValues(horizontal = 20.dp, vertical = 14.dp)
             ) {
                 TextBody(text = "Sign In to Thread", color = Color.White)
+            }
+        }
+    }
+}
+
+@Composable
+fun NewPasswordScreen(threadNavController: ThreadNavController) {
+    val viewModel = remember {
+        SignUpViewModelProvider.getInstance()
+    }
+
+    SignUpLayout(threadNavController = threadNavController, title = "New password") {
+        MessageTextField(
+            value = viewModel.newPassword.value,
+            onValueChange = { viewModel.newPassword.setText(it) },
+            placeHolder = "New password",
+            password = true
+        )
+        Spacer(height = 16.dp)
+        Row {
+            Button(
+                modifier = Modifier.weight(1f),
+                onClick = {
+                    viewModel.updateNewPassword {
+                        threadNavController.navigate(LoginDestination.LOGIN.route)
+                    }
+                },
+                rounded = false,
+                paddingValues = PaddingValues(horizontal = 20.dp, vertical = 14.dp)
+            ) {
+                TextBody(text = "Change to new password", color = Color.White)
             }
         }
     }

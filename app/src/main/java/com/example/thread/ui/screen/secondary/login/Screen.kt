@@ -2,6 +2,7 @@ package com.example.thread.ui.screen.secondary.login
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -69,7 +70,19 @@ fun LoginScreen(
             placeHolder = "Password",
             password = true
         )
-        Spacer(height = 8.dp)
+        Spacer(height = 12.dp)
+        Box(modifier = Modifier.fillMaxWidth()) {
+            TextBody(
+                text = "Forgot password?",
+                color = Color.Gray,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .clickable {
+                        threadNavController.navigate(LoginDestination.FORGOT_PASSWORD.route)
+                    }
+            )
+        }
+        Spacer(height = 28.dp)
         Button(
             onClick = {
                 viewModel.loginSubmit(
@@ -98,7 +111,7 @@ fun LoginScreen(
                 bold = true
             )
         }
-        Spacer(height = 16.dp)
+        Spacer(height = 30.dp)
         TextBody(
             text = "Or create an account",
             color = Color.Gray,

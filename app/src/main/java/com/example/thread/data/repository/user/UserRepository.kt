@@ -75,4 +75,9 @@ class UserRepository(
     suspend fun isEmailExists(email: String): Boolean {
         return apiService.isEmailExists(email).isSuccessful
     }
+
+    // 1.11. Update new password
+    suspend fun updateNewPassword(requestBody: UserLoginRequest) {
+        apiService.updateNewPassword(requestBody)
+    }
 }

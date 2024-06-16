@@ -1,10 +1,8 @@
 package com.example.thread.ui.screen.secondary.signup
 
-import android.util.Patterns
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.thread.data.model.user.UserLoginRequest
 import com.example.thread.data.model.user.UserRegisterRequest
 import com.example.thread.data.repository.resource.ResourceRepository
 import com.example.thread.data.repository.user.UserRepository
@@ -49,6 +47,15 @@ class SignUpViewModel(
     val lastName = TextData()
     val password = TextData()
     val username = TextData()
+    val newPassword = TextData()
+
+    fun updateNewPassword(onResponse: CoroutineScope.() -> Unit) {
+        viewModelScope.launch {
+            val requestBody = UserLoginRequest(email.value.text, newPassword.value.text)
+            userRepository.updateNewPassword(requestBody)
+            onResponse()
+        }
+    }
 
     fun isEmailExist(
         onInvalidEmail: () -> Unit,

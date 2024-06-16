@@ -106,6 +106,10 @@ interface ApiService {
     @GET("user/exist/{email}")
     suspend fun isEmailExists(@Path("email") email: String): Response<Unit>
 
+    // 1.11. Update new password
+    @PATCH("user/password/renew")
+    suspend fun updateNewPassword(@Body requestBody: UserLoginRequest): Response<Unit>
+
     // 2.1. Get Thread by `threadId`
     @GET("thread/{threadId}")
     suspend fun getThread(
