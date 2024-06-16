@@ -25,10 +25,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -61,7 +59,6 @@ import com.example.thread.ui.navigation.ThreadNavController
 import com.example.thread.ui.navigation.followerlist.FollowerListDestination
 import com.example.thread.ui.navigation.myprofile.MyProfileDestination
 import com.example.thread.ui.screen.GlobalViewModelProvider
-import okhttp3.internal.wait
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -166,7 +163,7 @@ fun ProfileHeader(
 
         // Confirmation dialog
         ConfirmationAlert(
-            showDialog = displaySaveConfirmation,
+            display = displaySaveConfirmation,
             title = "Update your profile",
             text = "Are you sure to update your profile",
             onConfirmClick = {

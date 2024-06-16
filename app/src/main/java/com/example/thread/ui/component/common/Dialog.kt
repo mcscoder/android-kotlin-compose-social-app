@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 
 @Composable
 fun ConfirmationAlert(
-    showDialog: MutableState<Boolean>,
+    display: MutableState<Boolean>,
     onDismiss: () -> Unit = {},
     onConfirmClick: () -> Unit = {},
     onCancelClick: () -> Unit = {},
@@ -19,17 +19,17 @@ fun ConfirmationAlert(
     confirmText: String = "Confirm",
     cancelText: String = "Cancel",
 ) {
-    if (showDialog.value) {
+    if (display.value) {
         AlertDialog(
             onDismissRequest = {
-                showDialog.value = false
+                display.value = false
                 onDismiss()
             },
             title = { Text(text = title) },
             text = { Text(text = text) },
             confirmButton = {
                 TextButton(onClick = {
-                    showDialog.value = false
+                    display.value = false
                     onConfirmClick()
                 }) {
                     Text(confirmText)
@@ -37,7 +37,7 @@ fun ConfirmationAlert(
             },
             dismissButton = {
                 TextButton(onClick = {
-                    showDialog.value = false
+                    display.value = false
                     onCancelClick()
                 }) {
                     Text(cancelText)
